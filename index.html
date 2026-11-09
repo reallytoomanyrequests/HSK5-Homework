@@ -47,6 +47,14 @@
   .tab:hover{background:#e8e4f2} .tab.on{background:var(--brand);color:#fff;font-weight:700} .tab.locked{opacity:.45}
   .tab .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok);margin-left:6px;vertical-align:middle}
   .content{padding:28px 32px 60px;max-width:1240px;width:100%}
+  .bellwrap{position:relative;margin-left:auto}
+  .bell{appearance:none;border:0;background:#e8e4f2;border-radius:10px;width:42px;height:42px;font-size:18px;cursor:pointer;position:relative}
+  .bbadge{position:absolute;top:-6px;right:-6px;background:var(--bad);color:#fff;font-size:11px;font-weight:700;border-radius:999px;min-width:18px;height:18px;line-height:18px;text-align:center;padding:0 5px}
+  .notis{position:absolute;right:0;top:50px;width:340px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px rgba(30,20,60,.12);z-index:30;overflow:hidden}
+  .nhead{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)} .nhead a{font-size:12px;color:var(--mute);text-decoration:none}
+  .nitem{padding:12px 16px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;gap:10px;align-items:flex-start} .nitem:hover{background:#f6f4fb} .nitem.seen{opacity:.55}
+  .nitem .ic{font-size:18px} .nitem small{display:block;color:var(--mute);margin-top:2px}
+  .nempty{padding:24px;text-align:center;color:var(--mute);font-size:14px}
   .panel{display:none} .panel.on{display:block}
   .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:18px}
   .card h2{font-size:17px;margin:0 0 6px;color:var(--brand)}
@@ -118,6 +126,8 @@
       <h1 id="title">숙제를 선택하세요</h1>
       <nav class="tabs" id="tabs"></nav>
       <button class="btn ok big" id="submit" style="display:none">제출하고 정답 보기</button>
+      <div class="bellwrap"><button class="bell" id="bell" title="알림">🔔<span class="bbadge" id="bbadge" style="display:none">0</span></button>
+        <div class="notis" id="notis" style="display:none"><div class="nhead"><b>알림</b><a href="#" id="nall">모두 읽음</a></div><div id="nlist"></div></div></div>
     </div>
     <div class="content" id="content"><div class="empty">왼쪽에서 날짜를 고르면 숙제가 열려요.</div></div>
   </main>
@@ -127,7 +137,7 @@
 // ===== 설정 =====
 const OWNER = "reallytoomanyrequests";   // GitHub 아이디
 const REPO  = "HSK5-Homework";           // 저장소 이름
-const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbx-NOygHcdZNQAIt7Yy7THCrvFc0rOoYvLherlOk7-QHkD_Rjw7L5yBSJ4Y8WdmnMWu/exec";                   // Google Apps Script 웹 앱 URL (.../exec)
+const SUBMIT_URL = "";                   // Google Apps Script 웹 앱 URL (.../exec)
 const STUDENT = "기솔";
 // ================
 const $ = s => document.querySelector(s);
@@ -180,8 +190,38 @@ async function teacherToggle(){
   const r=await api({action:"pin",pin});
   if(r&&r.ok){ teacherPin=pin; store.set("teacherPin",pin); paintTeacher(); toast("선생님 모드"); route(); } else toast("비밀번호가 틀렸어요");
 }
-$("#tlink").onclick=e=>{ e.preventDefault(); teacherToggle(); };
+$("#tlink").onclick=e=>{ e.preventDefault(); teacherToggle().then(()=>loadNotis()); };
 paintTeacher();
+
+// ---------- 알림 ----------
+let NOTIS=[]; let pendingTab=null;
+const seenSet=()=>new Set(store.get("notiSeen",[]));
+const notiId=n=>`${n.type}|${n.day}|${n.cat||""}|${String(n.time).slice(0,16)}`;
+async function loadNotis(){
+  const r=await api({action:"feed"}); if(!r||!r.ok) return;
+  const mine=isTeacher()?r.feed.filter(x=>x.type==="submission"):r.feed.filter(x=>x.type==="feedback");
+  NOTIS=mine.sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,30);
+  paintNotis();
+}
+function paintNotis(){
+  const seen=seenSet(); const unseen=NOTIS.filter(n=>!seen.has(notiId(n)));
+  const bd=$("#bbadge"); bd.style.display=unseen.length?"inline-block":"none"; bd.textContent=unseen.length;
+  const k=d=>{ const x=kdate(d); return `${x.m}/${x.d} (${x.wd})`; };
+  const dayNo=d=>{ const i=DAYS.indexOf(d); return i>=0?`Day ${DAYS.length-i}`:k(d); };
+  $("#nlist").innerHTML=NOTIS.length?NOTIS.map(n=>{
+    const id=notiId(n); const s=seen.has(id);
+    const text=n.type==="feedback"?`${n.cat||""} 피드백을 확인해보세요${n.cat==="말하기"?"~!":"!"}`:`${STUDENT}이 숙제를 제출했어요${n.score?` (듣기·독해 ${n.score})`:""}`;
+    return `<div class="nitem ${s?"seen":""}" data-id="${id}" data-day="${n.day}" data-tab="feedback"><span class="ic">${n.type==="feedback"?(n.cat==="쓰기"?"✍️":"🎤"):"📥"}</span><div>${text}<small>${dayNo(n.day)} · ${fmtTime(n.time)}</small></div></div>`;
+  }).join(""):`<div class="nempty">아직 알림이 없어요</div>`;
+  $("#nlist").querySelectorAll(".nitem").forEach(el=>el.onclick=()=>{
+    const seen=seenSet(); seen.add(el.dataset.id); store.set("notiSeen",[...seen]); $("#notis").style.display="none";
+    pendingTab="feedback"; if(decodeURIComponent(location.hash.slice(1))===el.dataset.day) route(); else location.hash=el.dataset.day;
+    paintNotis();
+  });
+}
+$("#bell").onclick=e=>{ e.stopPropagation(); const n=$("#notis"); n.style.display=n.style.display==="none"?"block":"none"; };
+$("#nall").onclick=e=>{ e.preventDefault(); store.set("notiSeen",NOTIS.map(notiId)); paintNotis(); };
+document.addEventListener("click",e=>{ if(!e.target.closest(".bellwrap")) $("#notis").style.display="none"; });
 
 // ---------- 목록 ----------
 let DAYS=[];
@@ -207,6 +247,7 @@ async function renderList(){
     return `<a href="#${d}" class="${d===cur?"active":""}"><div class="d"><span>Day ${days.length-i} <small>${k.m}/${k.d} (${k.wd})</small></span></div><div class="badges">${b.join("")}</div></a>`;
   }).join("");
   $("#count").textContent=`총 ${days.length}회차`;
+  loadNotis();
 }
 
 // ---------- 부품 ----------
@@ -436,6 +477,7 @@ async function renderDay(day){
       active=p.id; paintTabs(); window.scrollTo({top:0});
     });
   };
+  if(pendingTab && panels.find(p=>p.id===pendingTab)){ active=pendingTab; pendingTab=null; }
   paintTabs();
   if(reveal && (state.submitted||isTeacher())) reveal();
 
