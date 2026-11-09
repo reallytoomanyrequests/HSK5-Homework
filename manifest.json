@@ -1,0 +1,1 @@
+{"name": "기솔의 HSK 5급 스터디룸", "short_name": "스터디룸", "start_url": "./", "display": "standalone", "background_color": "#f3f2f6", "theme_color": "#6a5aa8", "icons": [{"src": "icon.png", "sizes": "192x192", "type": "image/png"}, {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}]}

@@ -1,0 +1,62 @@
+{
+  "date": "2026-11-09",
+  "title": "Day 1",
+  "sections": [
+    {
+      "type": "listening",
+      "part": 1,
+      "title": "듣기 제1부분",
+      "audio": "listening1.mp3",
+      "instruction": "대화를 듣고 질문에 알맞은 답을 고르세요. 음성은 한 번만 재생됩니다.",
+      "questions": [
+        {
+          "n": 1,
+          "q": "男的最可能在哪儿？",
+          "options": [
+            "健身房",
+            "银行",
+            "超市",
+            "电影院"
+          ]
+        },
+        {
+          "n": 2,
+          "q": "关于男的，可以知道什么？",
+          "options": [
+            "去了兵马俑",
+            "没出过酒店",
+            "换了工作",
+            "不喜欢西安"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "writing",
+      "part": 2,
+      "title": "쓰기 제2부분 (72번)",
+      "instruction": "아래 주제로 200자 이상 작문하세요. 제한 시간 25분.",
+      "prompt": "现在很多人喜欢在网上购物。请你写一篇不少于200字的作文，谈谈网上购物的优点和缺点，并说说你的看法。",
+      "minChars": 200,
+      "timeSec": 1500
+    },
+    {
+      "type": "speaking",
+      "part": 1,
+      "title": "말하기 제1부분 (1번)",
+      "instruction": "음성을 한 번 듣고, 들은 내용을 다시 말하세요. 답변 시간 1분 30초.",
+      "audio": "speaking1.mp3",
+      "prepSec": 0,
+      "answerSec": 90
+    },
+    {
+      "type": "speaking",
+      "part": 3,
+      "title": "말하기 제3부분 (4번)",
+      "instruction": "질문을 읽고 준비 시간 3분 30초 후 2분 30초 동안 답하세요.",
+      "prompt": "你认为大学生应该在课余时间打工吗？为什么？",
+      "prepSec": 210,
+      "answerSec": 150
+    }
+  ]
+}
