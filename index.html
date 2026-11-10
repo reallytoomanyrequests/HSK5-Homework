@@ -14,22 +14,22 @@
   html,body{height:100%}
   body{margin:0;background:linear-gradient(180deg,#d9f2ea 0,#ecf8f4 220px,#f2faf7 100%) fixed;color:var(--ink);font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;font-size:15px;line-height:1.55}
   .shell{display:flex;min-height:100vh}
-  aside{width:272px;flex:none;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;box-shadow:2px 0 12px rgba(20,90,75,.05)}
-  .brand{padding:22px 22px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line)}
-  .brand img{width:40px;height:40px;border-radius:10px}
-  .brand b{font-size:15px;display:block;line-height:1.3} .brand small{color:var(--mute);font-size:12px}
-  .daylist{flex:1;overflow:auto;padding:12px}
+  aside{width:236px;flex:none;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;box-shadow:2px 0 12px rgba(20,90,75,.05)}
+  .brand{padding:18px 14px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
+  .brand img{width:34px;height:34px;border-radius:9px}
+  .brand b{font-size:14px;display:block;line-height:1.3;white-space:nowrap} .brand small{color:var(--mute);font-size:12px}
+  .daylist{flex:1;overflow:auto;padding:10px}
   .daylist a{display:block;padding:12px 14px;border-radius:12px;text-decoration:none;color:var(--ink);margin-bottom:4px}
   .daylist a:hover{background:#e8f6f1} .daylist a.active{background:var(--soft);color:var(--brand);font-weight:700}
   .daylist .d{display:flex;justify-content:space-between;align-items:center}
   .daylist small{color:var(--mute);font-weight:400;margin-left:6px}
   .daylist a .d .car{font-size:11px;color:var(--mute);transition:transform .15s} .daylist a.open .d .car{transform:rotate(90deg)}
   .card,.rsec{scroll-margin-top:90px}
-  .subnav{margin:2px 0 10px 10px;padding-left:10px;border-left:2px solid var(--soft)}
-  .subnav .si{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;color:#1b4a41}
-  .subnav .si:hover{background:#e8f6f1} .subnav .si.on{background:var(--soft);color:var(--brand)} .subnav .si.locked{opacity:.6}
-  .subnav .si .car{font-size:10px;color:var(--mute);transition:transform .15s} .subnav .si.open .car{transform:rotate(90deg)}
-  .subnav .kids{margin:0 0 4px 10px} .subnav .kid{padding:5px 10px;border-radius:6px;cursor:pointer;font-size:13px;color:#3e5550} .subnav .kid:hover{background:#e8f6f1;color:var(--brand)}
+  .subnav{margin:4px 0 10px 18px;padding-left:0;border-left:2px solid var(--line)}
+  .subnav .si{position:relative;display:flex;justify-content:space-between;align-items:center;padding:4px 10px 4px 14px;margin-left:-2px;border-left:3px solid transparent;cursor:pointer;font-size:14px;font-weight:600;color:#3e5550;line-height:1.5}
+  .subnav .si:hover{color:var(--brand)} .subnav .si.on{border-left-color:var(--brand);color:var(--brand);font-weight:800} .subnav .si.locked{opacity:.55}
+  .subnav .si .car{font-size:9px;color:#9fb5ae;transition:transform .15s} .subnav .si.open .car{transform:rotate(90deg)}
+  .subnav .kids{margin:0 0 2px 14px} .subnav .kid{padding:2px 10px;cursor:pointer;font-size:13px;color:#64766f;line-height:1.6} .subnav .kid::before{content:"· ";color:#9fb5ae} .subnav .kid:hover{color:var(--brand)}
   .badges{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
   .badge{font-size:11px;padding:2px 8px;border-radius:999px;background:#e8f4f0;color:var(--mute);white-space:nowrap}
   .badge.done{background:#e3f6ee;color:var(--ok)} .badge.doing{background:#fdf1e3;color:var(--warn)} .badge.fb{background:var(--soft);color:var(--brand)} .badge.new{background:var(--soft);color:var(--brand)}
@@ -78,7 +78,7 @@
   .q{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border:2px solid var(--green);border-radius:12px;background:#fff}
   .gtab + .q{border-top-left-radius:0}
   .pbox{border:2px solid var(--green);border-radius:0 12px 12px 12px;background:#fff;padding:22px 26px;max-width:760px;overflow:hidden}
-  .pbox p{margin:0 0 14px;text-indent:2em;font-family:var(--zh);font-size:17px;line-height:1.9} .pbox p:last-child{margin-bottom:0}
+  .pbox p{margin:0 0 14px;text-indent:0;font-family:var(--zh);font-size:17px;line-height:1.9} .pbox p:last-child{margin-bottom:0}
   .pbox img{float:right;width:200px;max-width:40%;margin:4px 0 10px 18px;border-radius:6px}
   .pbox u{text-decoration:underline;text-underline-offset:4px}
   .pbox.para p{text-indent:0;margin-bottom:12px} .pbox.para b{font-family:var(--zh);margin-right:6px}
@@ -92,7 +92,7 @@
   .opt .rd::after{content:"";position:absolute;inset:3px;border-radius:50%;background:#c8d8d3}
   .opt.sel .rd{border-color:#4b615b} .opt.sel .rd::after{background:#4b615b}
   .opt b{width:20px;color:var(--ink);font-weight:600}
-  .opt.right{background:#d6f3e9} .opt.right .rd{border-color:var(--ok)} .opt.right .rd::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--ok)}
+  .opt.right{background:#fff4bf} .opt.right .rd{border-color:var(--ok)} .opt.right .rd::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--ok)}
   .opt.wrong{background:#fbe9e8} .opt.wrong .rd{border-color:var(--bad)}
   .qa{display:block;border:0;padding:0;background:transparent}
   .qa .q{margin-bottom:12px}
@@ -151,7 +151,7 @@
   .rqh{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font-size:16px;margin-bottom:6px}
   .kr2{color:#5d706a;font-size:13.5px} .py{color:var(--brand);font-size:13px;margin:0 8px}
   .okb{color:var(--ok);font-weight:600;font-size:13px} .badb{color:var(--bad);font-weight:600;font-size:13px}
-  .ropt{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;padding:5px 10px;border-radius:6px;font-size:15px} .ropt.right{background:#d0f1e6} .ropt.wrong{background:#fde3e3}
+  .ropt{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;padding:5px 10px;border-radius:6px;font-size:15px} .ropt.right{background:#fff4bf} .ropt.wrong{background:#fde3e3}
   .rq,.q{position:relative} .rq .rqh{padding-right:130px}
   .rq>.rqh .savew,.q>.savew{position:absolute;top:12px;right:14px;margin:0}
   .optkr{margin-left:12px;font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:13.5px;color:#5d706a;font-weight:400}
@@ -161,7 +161,7 @@
   .order .slot .n{font-weight:700;color:#1b4a41}
   .order select{width:64px;height:52px;font-size:20px;font-weight:700;text-align:center;text-align-last:center;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);cursor:pointer;appearance:none;-webkit-appearance:none}
   .order select:focus{outline:none;border-color:var(--brand)} .order select:disabled{cursor:default;opacity:1}
-  .order .slot.right select{border-color:var(--ok);background:#d6f3e9} .order .slot.wrong select{border-color:var(--bad);background:#fde3e3}
+  .order .slot.right select{border-color:#e0bf45;background:#fff4bf} .order .slot.wrong select{border-color:var(--bad);background:#fde3e3}
   .order .slot .ca{font-size:12px;color:var(--ok);font-weight:700;min-height:16px}
   .savew{margin-left:10px;font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--brand);background:#fff;color:var(--brand);cursor:pointer} .savew.on{background:var(--brand);color:#fff}
   .back{display:none}
@@ -216,6 +216,7 @@ const BLOBS = {};
 const idb={
   open(){ return new Promise((res,rej)=>{ const r=indexedDB.open("hsk-rec",1); r.onupgradeneeded=()=>r.result.createObjectStore("rec"); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); },
   async put(k,v){ try{ const db=await this.open(); await new Promise((res,rej)=>{ const t=db.transaction("rec","readwrite"); t.objectStore("rec").put(v,k); t.oncomplete=res; t.onerror=()=>rej(t.error); }); }catch(e){} },
+  async delPrefix(prefix){ try{ const db=await this.open(); await new Promise((res)=>{ const t=db.transaction("rec","readwrite"); const c=t.objectStore("rec").openCursor(); c.onsuccess=()=>{ const cur=c.result; if(!cur){ return; } if(String(cur.key).startsWith(prefix)) cur.delete(); cur.continue(); }; t.oncomplete=res; t.onerror=res; }); }catch(e){} },
   async all(prefix){ try{ const db=await this.open(); return await new Promise((res,rej)=>{ const out={}; const t=db.transaction("rec","readonly"); const c=t.objectStore("rec").openCursor(); c.onsuccess=()=>{ const cur=c.result; if(!cur){ res(out); return; } if(String(cur.key).startsWith(prefix)) out[cur.key]=cur.value; cur.continue(); }; c.onerror=()=>rej(c.error); }); }catch(e){ return {}; } }
 };
 let teacherPin = store.get("teacherPin","");
@@ -740,7 +741,7 @@ async function renderDay(day){
   // 제출
   const sb=$("#submit");
   if(isTeacher()){ sb.style.display="none"; return; }
-  sb.style.display="inline-block"; sb.disabled=false; sb.textContent=state.submitted?"다시 제출":"제출하고 정답 보기";
+  sb.style.display="inline-block"; sb.disabled=false; sb.textContent=state.submitted?"다시 풀기":"제출하고 정답 보기";
   const summary=()=>{
     let s=`[HSK5 숙제 ${day}] ${STUDENT}\n`;
     set.sections.forEach((sec,si)=>{
@@ -761,8 +762,14 @@ async function renderDay(day){
     }
     return p;
   };
-  const finish=()=>{ state.submitted=true; saveState(state); content.querySelectorAll("textarea:not(.fb)").forEach(t=>t.disabled=true); if(reveal){ reveal(); active="answers"; paintTabs(); window.scrollTo({top:0}); } sb.textContent="다시 제출"; renderList(); };
+  const finish=()=>{ state.submitted=true; saveState(state); content.querySelectorAll("textarea:not(.fb)").forEach(t=>t.disabled=true); if(reveal){ reveal(); active="answers"; paintTabs(); window.scrollTo({top:0}); } sb.textContent="다시 풀기"; renderList(); };
   sb.onclick=async()=>{
+    if(state.submitted){
+      if(!(await ask("내가 고른 답, 쓴 글, 녹음을 모두 지우고 처음부터 다시 풀까요? (이미 제출한 기록은 선생님께 그대로 남아 있어요)",{okText:"다시 풀기"}))) return;
+      store.set("hw:"+day,{day,choices:{},writing:{},plays:{},recs:{},times:{},submitted:false,setVersion:set.version});
+      await idb.delPrefix(`${day}|`); for(const k in BLOBS) delete BLOBS[k];
+      pendingTab=null; renderDay(day); renderList(); window.scrollTo({top:0}); toast("처음부터 다시 풀 수 있어요"); return;
+    }
     const missingRec=set.sections.some((sec,si)=>sec.type==="speaking"&&state.recs?.[`r${si}`]&&!BLOBS[`r${si}`]&&!state.submitted);
     if(missingRec && !(await ask("녹음 원본이 사라진 항목이 있어요 (새로고침 때문). 그대로 제출할까요?",{okText:"제출"}))) return;
     if(!SUBMIT_URL){ finish(); toast("제출 완료 (정답이 열렸어요)"); return; }
