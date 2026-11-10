@@ -3,64 +3,71 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#5f9a1f">
+<meta name="theme-color" content="#1a9a80">
 <title>기솔의 HSK 5급 스터디룸</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.png">
 <style>
-  :root{--bg:#f1f7e8;--card:#fcfdfb;--ink:#2a2f26;--mute:#6f7869;--line:#dfe8d3;--brand:#5f9a1f;--brand2:#7cb52e;--green:#8dc63f;--soft:#dff0c3;--ok:#2e8b57;--warn:#c98a3a;--bad:#b9524c;--teacher:#c98a3a;
+  :root{--bg:#ecf8f4;--card:#fcfefd;--ink:#21302c;--mute:#64766f;--line:#d4eae3;--brand:#1a9a80;--brand2:#34bb9c;--green:#66d3b8;--soft:#d3f2e9;--ok:#12876c;--warn:#c98a3a;--bad:#b9524c;--teacher:#c98a3a;
         --zh:"Noto Sans SC","PingFang SC","Microsoft YaHei","Malgun Gothic","Apple SD Gothic Neo",sans-serif}
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{margin:0;background:linear-gradient(180deg,#e4f1d2 0,#f1f7e8 220px,#f6f9f1 100%) fixed;color:var(--ink);font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;font-size:15px;line-height:1.55}
+  body{margin:0;background:linear-gradient(180deg,#d9f2ea 0,#ecf8f4 220px,#f2faf7 100%) fixed;color:var(--ink);font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;font-size:15px;line-height:1.55}
   .shell{display:flex;min-height:100vh}
-  aside{width:272px;flex:none;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;box-shadow:2px 0 12px rgba(60,90,30,.05)}
+  aside{width:272px;flex:none;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;box-shadow:2px 0 12px rgba(20,90,75,.05)}
   .brand{padding:22px 22px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line)}
   .brand img{width:40px;height:40px;border-radius:10px}
   .brand b{font-size:15px;display:block;line-height:1.3} .brand small{color:var(--mute);font-size:12px}
   .daylist{flex:1;overflow:auto;padding:12px}
   .daylist a{display:block;padding:12px 14px;border-radius:12px;text-decoration:none;color:var(--ink);margin-bottom:4px}
-  .daylist a:hover{background:#f0f4ea} .daylist a.active{background:var(--soft);color:var(--brand);font-weight:700}
+  .daylist a:hover{background:#e8f6f1} .daylist a.active{background:var(--soft);color:var(--brand);font-weight:700}
   .daylist .d{display:flex;justify-content:space-between;align-items:center}
   .daylist small{color:var(--mute);font-weight:400;margin-left:6px}
+  .daylist a .d .car{font-size:11px;color:var(--mute);transition:transform .15s} .daylist a.open .d .car{transform:rotate(90deg)}
+  .card,.rsec{scroll-margin-top:90px}
+  .subnav{margin:2px 0 10px 10px;padding-left:10px;border-left:2px solid var(--soft)}
+  .subnav .si{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;color:#1b4a41}
+  .subnav .si:hover{background:#e8f6f1} .subnav .si.on{background:var(--soft);color:var(--brand)} .subnav .si.locked{opacity:.6}
+  .subnav .si .car{font-size:10px;color:var(--mute);transition:transform .15s} .subnav .si.open .car{transform:rotate(90deg)}
+  .subnav .kids{margin:0 0 4px 10px} .subnav .kid{padding:5px 10px;border-radius:6px;cursor:pointer;font-size:13px;color:#3e5550} .subnav .kid:hover{background:#e8f6f1;color:var(--brand)}
   .badges{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
-  .badge{font-size:11px;padding:2px 8px;border-radius:999px;background:#eef0f6;color:var(--mute);white-space:nowrap}
+  .badge{font-size:11px;padding:2px 8px;border-radius:999px;background:#e8f4f0;color:var(--mute);white-space:nowrap}
   .badge.done{background:#e3f6ee;color:var(--ok)} .badge.doing{background:#fdf1e3;color:var(--warn)} .badge.fb{background:var(--soft);color:var(--brand)} .badge.new{background:var(--soft);color:var(--brand)}
   .sidetools{padding:10px 12px;border-top:1px solid var(--line)}
   .sidetools a{display:block;padding:12px 14px;border-radius:12px;text-decoration:none;color:var(--ink);font-weight:600}
-  .sidetools a:hover{background:#f0f4ea} .sidetools a.active{background:var(--soft);color:var(--brand)}
+  .sidetools a:hover{background:#e8f6f1} .sidetools a.active{background:var(--soft);color:var(--brand)}
   .chips{display:flex;gap:8px;flex-wrap:wrap}
   .chip{padding:9px 16px;border:1px solid var(--line);border-radius:999px;background:#fff;cursor:pointer;font-size:14px}
-  .chip:hover{border-color:#bfdc8f} .chip.on{background:var(--brand);color:#fff;border-color:var(--brand);font-weight:600}
+  .chip:hover{border-color:#9cdac7} .chip.on{background:var(--brand);color:#fff;border-color:var(--brand);font-weight:600}
   .field{display:flex;align-items:center;gap:8px;font-size:15px}
   .field input{width:90px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-size:16px;text-align:center}
   .field input.wide{width:100%;text-align:left}
   .step{margin-top:18px} .step .lab{font-weight:600;margin-bottom:8px}
   table.log{width:100%;border-collapse:collapse;font-size:14px} table.log th{font-weight:600;color:var(--mute);text-align:left;padding:8px;border-bottom:1px solid var(--line)} table.log td{padding:8px;border-bottom:1px solid var(--line)}
-  .sidefoot{padding:14px 22px;border-top:1px solid var(--line);font-size:12px;color:#b8b4c9;display:flex;justify-content:space-between;align-items:center}
-  .sidefoot a{color:#b8b4c9;text-decoration:none} .sidefoot a.on{color:var(--brand);font-weight:700}
+  .sidefoot{padding:14px 22px;border-top:1px solid var(--line);font-size:12px;color:#a9c9bf;display:flex;justify-content:space-between;align-items:center}
+  .sidefoot a{color:#a9c9bf;text-decoration:none} .sidefoot a.on{color:var(--brand);font-weight:700}
   main{flex:1;min-width:0;display:flex;flex-direction:column}
-  .topbar{position:sticky;top:0;z-index:5;background:rgba(241,247,232,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:14px 32px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .topbar{position:sticky;top:0;z-index:5;background:rgba(236,248,244,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:14px 32px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
   .topbar h1{font-size:20px;margin:0;white-space:nowrap} .topbar h1 small{font-weight:400;color:var(--mute);font-size:13px;margin-left:8px}
   .tabs{display:flex;gap:4px;flex:1;overflow:auto}
-  .tab{appearance:none;border:0;background:transparent;padding:8px 14px;border-radius:10px;font-size:15px;font-weight:700;color:#2f4a1a;cursor:pointer;white-space:nowrap}
-  .tab:hover{background:#e6eedb} .tab.on{background:var(--brand);color:#fff;font-weight:700} .tab.locked{opacity:.6}
+  .tab{appearance:none;border:0;background:transparent;padding:8px 14px;border-radius:10px;font-size:15px;font-weight:700;color:#1b4a41;cursor:pointer;white-space:nowrap}
+  .tab:hover{background:#dbefe8} .tab.on{background:var(--brand);color:#fff;font-weight:700} .tab.locked{opacity:.6}
   .tab .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok);margin-left:6px;vertical-align:middle}
   .content{padding:28px 32px 60px;max-width:1240px;width:100%}
   .bellwrap{position:relative}
-  .fsctl{margin-left:auto;display:flex;align-items:center;gap:4px;background:#e6eedb;border-radius:10px;padding:4px 6px}
-  .fsb{appearance:none;border:0;background:transparent;font-size:14px;font-weight:700;color:var(--brand);cursor:pointer;padding:4px 6px;border-radius:6px} .fsb:hover{background:#d6e3c4}
+  .fsctl{margin-left:auto;display:flex;align-items:center;gap:4px;background:#dbefe8;border-radius:10px;padding:4px 6px}
+  .fsb{appearance:none;border:0;background:transparent;font-size:14px;font-weight:700;color:var(--brand);cursor:pointer;padding:4px 6px;border-radius:6px} .fsb:hover{background:#c5e5da}
   #fsVal{font-size:12px;color:var(--mute);min-width:40px;text-align:center}
-  .bell{appearance:none;border:0;background:#e6eedb;border-radius:10px;width:42px;height:42px;font-size:18px;cursor:pointer;position:relative}
+  .bell{appearance:none;border:0;background:#dbefe8;border-radius:10px;width:42px;height:42px;font-size:18px;cursor:pointer;position:relative}
   .bbadge{position:absolute;top:-6px;right:-6px;background:var(--bad);color:#fff;font-size:11px;font-weight:700;border-radius:999px;min-width:18px;height:18px;line-height:18px;text-align:center;padding:0 5px}
-  .notis{position:absolute;right:0;top:50px;width:340px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px rgba(30,50,20,.12);z-index:30;overflow:hidden}
+  .notis{position:absolute;right:0;top:50px;width:340px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px rgba(15,50,45,.12);z-index:30;overflow:hidden}
   .nhead{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)} .nhead a{font-size:12px;color:var(--mute);text-decoration:none}
-  .nitem{padding:12px 16px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;gap:10px;align-items:flex-start} .nitem:hover{background:#f3f6ee} .nitem.seen{opacity:.55}
+  .nitem{padding:12px 16px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;gap:10px;align-items:flex-start} .nitem:hover{background:#edf7f3} .nitem.seen{opacity:.55}
   .nitem .ic{font-size:18px} .nitem small{display:block;color:var(--mute);margin-top:2px}
   .nempty{padding:24px;text-align:center;color:var(--mute);font-size:14px}
   .panel{display:none} .panel.on{display:block}
   .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:18px}
-  .card h2{font-size:18px;margin:0 0 6px;color:#2f4a1a;font-family:var(--zh)}
+  .card h2{font-size:18px;margin:0 0 6px;color:#1b4a41;font-family:var(--zh)}
   .card.teacher{border-color:var(--line)}
   .inst{color:var(--mute);font-size:14px;margin:0 0 14px}
   .zh{font-family:var(--zh);font-size:18px;line-height:1.9}
@@ -80,17 +87,17 @@
   .q .stem{font-weight:600;margin-bottom:10px}
   .opts{display:grid;gap:1px}
   .opt{display:flex;gap:10px;align-items:center;padding:4px 8px;border-radius:8px;cursor:pointer;background:transparent;border:1px solid transparent}
-  .opt:hover{background:#f3f6ee}
-  .opt .rd{flex:none;width:18px;height:18px;border-radius:50%;border:2px solid #b5bdae;background:#fff;position:relative}
-  .opt .rd::after{content:"";position:absolute;inset:3px;border-radius:50%;background:#cfd6c8}
-  .opt.sel .rd{border-color:#5a6454} .opt.sel .rd::after{background:#5a6454}
+  .opt:hover{background:#edf7f3}
+  .opt .rd{flex:none;width:18px;height:18px;border-radius:50%;border:2px solid #afc2bc;background:#fff;position:relative}
+  .opt .rd::after{content:"";position:absolute;inset:3px;border-radius:50%;background:#c8d8d3}
+  .opt.sel .rd{border-color:#4b615b} .opt.sel .rd::after{background:#4b615b}
   .opt b{width:20px;color:var(--ink);font-weight:600}
-  .opt.right{background:#e6f4e4} .opt.right .rd{border-color:var(--ok)} .opt.right .rd::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--ok)}
+  .opt.right{background:#d6f3e9} .opt.right .rd{border-color:var(--ok)} .opt.right .rd::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--ok)}
   .opt.wrong{background:#fbe9e8} .opt.wrong .rd{border-color:var(--bad)}
   .qa{display:block;border:0;padding:0;background:transparent}
   .qa .q{margin-bottom:12px}
   .btn{appearance:none;border:0;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:600;background:var(--brand2);color:#fff;cursor:pointer}
-  .btn.sec{background:#e6eedb;color:var(--brand)} .btn.ok{background:var(--ok)} .btn.bad{background:var(--bad)} .btn.t{background:var(--brand)} .btn:disabled{opacity:.45;cursor:default}
+  .btn.sec{background:#dbefe8;color:var(--brand)} .btn.ok{background:var(--ok)} .btn.bad{background:var(--bad)} .btn.t{background:var(--brand)} .btn:disabled{opacity:.45;cursor:default}
   .btn.big{padding:12px 24px;font-size:15px}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
   .timer{font-variant-numeric:tabular-nums;font-size:30px;font-weight:700;color:var(--brand);min-width:96px}
@@ -99,15 +106,15 @@
   @media (max-width:720px){ .tr-timer{position:static;margin-top:10px} .has-timer h2{padding-right:0} }
   .timer.warn{color:var(--bad)}
   textarea{width:100%;min-height:320px;border:1px solid var(--line);border-radius:12px;padding:16px;font-family:var(--zh);font-size:18px;line-height:1.9;resize:vertical;background:#fff}
-  textarea:focus{outline:2px solid #bfdc8f;border-color:transparent}
+  textarea:focus{outline:2px solid #9cdac7;border-color:transparent}
   textarea.fb{min-height:120px;font-family:inherit;font-size:15px;line-height:1.6}
   .count{text-align:right;color:var(--mute);font-size:14px;margin-top:6px} .count.ok{color:var(--ok)}
-  .ans{background:#f3f6ee;border-left:4px solid var(--brand2);padding:12px 16px;border-radius:8px;margin-top:10px;white-space:pre-wrap}
-  .ans.gray{border-color:#cfd8c3}
+  .ans{background:#edf7f3;border-left:4px solid var(--brand2);padding:12px 16px;border-radius:8px;margin-top:10px;white-space:pre-wrap}
+  .ans.gray{border-color:#c6dbd4}
   .pts{margin:8px 0 0;padding-left:20px;color:var(--mute);font-size:14px} .pts li{margin-bottom:4px}
   .muted{color:var(--mute);font-size:14px}
   .player{display:flex;align-items:center;gap:14px;margin:8px 0}
-  .player .bar{flex:1;height:6px;background:#e6e2f2;border-radius:3px;overflow:hidden}
+  .player .bar{flex:1;height:6px;background:#d4eae3;border-radius:3px;overflow:hidden}
   .player .bar i{display:block;height:100%;width:0;background:var(--brand2)}
   .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#1c1b2e;color:#fff;padding:11px 18px;border-radius:10px;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:20}
   .toast.show{opacity:1}
@@ -118,32 +125,44 @@
   .fbgrid .lab{font-weight:600;margin-bottom:6px}
   .rec{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--bad);animation:blink 1s infinite}
   @keyframes blink{50%{opacity:.2}}
-  .modal{position:fixed;inset:0;background:rgba(20,30,15,.45);display:flex;align-items:center;justify-content:center;z-index:30}
+  .modal{position:fixed;inset:0;background:rgba(10,30,26,.45);display:flex;align-items:center;justify-content:center;z-index:30}
   .modal .box{background:#fff;border-radius:14px;padding:22px;width:min(360px,90vw)}
   .modal input{width:100%;padding:11px;border:1px solid var(--line);border-radius:8px;font-size:16px;margin:10px 0 14px}
   table.sub{width:100%;border-collapse:collapse;font-size:14px} table.sub td{padding:8px;border-top:1px solid var(--line);vertical-align:top} table.sub td:first-child{color:var(--mute);white-space:nowrap;width:120px} table.sub .zh{font-size:15px;line-height:1.75}
   .empty{color:var(--mute);text-align:center;padding:80px 20px}
-  .exp{margin-top:8px;padding:10px 12px;border-radius:8px;background:#f7faf2;border:1px dashed #cfdcb8;font-size:14px}
+  .exp{margin-top:8px;padding:10px 12px;border-radius:8px;background:#f1faf7;border:1px dashed #bde2d6;font-size:14px}
   .exp b.ok{color:var(--ok)} .exp b.bad{color:var(--bad)}
   .sol{margin-top:14px;border:1px solid var(--line);border-radius:12px;background:#fff;max-width:760px}
-  .sol summary{cursor:pointer;padding:12px 16px;font-weight:600;color:#2f4a1a;list-style:none} .sol summary::before{content:"▸ ";color:var(--brand)} .sol[open] summary::before{content:"▾ "}
+  .sol summary{cursor:pointer;padding:12px 16px;font-weight:600;color:#1b4a41;list-style:none} .sol summary::before{content:"▸ ";color:var(--brand)} .sol[open] summary::before{content:"▾ "}
   .sol .in{padding:0 16px 16px}
-  .kr{font-size:14px;color:#4b5546;line-height:1.75;white-space:pre-wrap;background:#fafbf7;border-left:3px solid #cfdcb8;padding:10px 12px;border-radius:6px;margin-top:8px}
+  .kr{font-size:14px;color:#3e5550;line-height:1.75;white-space:pre-wrap;background:#f5fbf9;border-left:3px solid #bde2d6;padding:10px 12px;border-radius:6px;margin-top:8px}
   .score{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:10px 0 18px;max-width:760px}
-  .score .tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px} .score .tile b{display:block;font-size:24px;color:var(--brand)} .score .tile small{color:var(--mute)}
+  .score .tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px} .score .tile b{display:block;font-size:24px;color:var(--brand)} .score .tile small{color:#1b4a41;font-weight:700;font-size:14px} .score .tile small+b+small{color:var(--mute);font-weight:400}
   .wrow{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;margin-bottom:8px;max-width:900px}
   .wrow .meta{font-size:12px;color:var(--mute);white-space:nowrap;min-width:110px} .wrow .body{flex:1} .wrow.done{opacity:.55}
   .vocab{margin-top:12px;border:1px solid var(--line);border-radius:12px;background:#fff;max-width:760px}
-  .vocab summary{cursor:pointer;padding:10px 16px;font-weight:600;color:#2f4a1a;list-style:none;font-size:14px} .vocab summary::before{content:"▸ ";color:var(--brand)} .vocab[open] summary::before{content:"▾ "}
-  .vocab table{width:100%;border-collapse:collapse;font-size:14px} .vocab td{padding:6px 16px;border-top:1px solid #eef3e4;vertical-align:top} .vocab td.w{font-size:17px;width:28%} .vocab td.py{color:var(--brand);width:28%}
+  .vocab summary{cursor:pointer;padding:10px 16px;font-weight:600;color:#1b4a41;list-style:none;font-size:14px} .vocab summary::before{content:"▸ ";color:var(--brand)} .vocab[open] summary::before{content:"▾ "}
+  .vocab-flat{margin-top:6px} .sol .vocab summary::before{content:"▸ "} .sol .vocab[open] summary::before{content:"▾ "} .sol .vocab summary{color:#1b4a41} .vocab td.py{font-family:"Noto Sans","Segoe UI",Arial,sans-serif}
+  .vocab table{width:100%;border-collapse:collapse;font-size:14px} .vocab td{padding:6px 16px;border-top:1px solid #e2f2ec;vertical-align:top} .vocab td.w{font-size:17px;width:28%} .vocab td.py{color:var(--brand);width:28%}
   .score .tile{cursor:pointer} .score .tile:hover{border-color:var(--brand)}
-  .rsec{margin-top:26px;padding-top:18px;border-top:2px solid var(--soft);max-width:900px} .rsec h3{margin:0 0 10px;font-size:17px;color:#2f4a1a}
+  .rsec{margin-top:26px;padding-top:18px;border-top:2px solid var(--soft);max-width:900px} .rsec h3{margin:0 0 10px;font-size:17px;color:#1b4a41}
   .rsec .ans{max-width:none} .rsec .pbox{max-width:none}
   .rq{margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#fff}
   .rqh{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font-size:16px;margin-bottom:6px}
-  .kr2{color:#6b7566;font-size:13.5px} .py{color:var(--brand);font-size:13px;margin:0 8px}
+  .kr2{color:#5d706a;font-size:13.5px} .py{color:var(--brand);font-size:13px;margin:0 8px}
   .okb{color:var(--ok);font-weight:600;font-size:13px} .badb{color:var(--bad);font-weight:600;font-size:13px}
-  .ropt{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;padding:5px 10px;border-radius:6px;font-size:15px} .ropt.right{background:#e4f2cf} .ropt.wrong{background:#fde3e3}
+  .ropt{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;padding:5px 10px;border-radius:6px;font-size:15px} .ropt.right{background:#d0f1e6} .ropt.wrong{background:#fde3e3}
+  .rq,.q{position:relative} .rq .rqh{padding-right:130px}
+  .rq>.rqh .savew,.q>.savew{position:absolute;top:12px;right:14px;margin:0}
+  .optkr{margin-left:12px;font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:13.5px;color:#5d706a;font-weight:400}
+  #submit{background:#7a68c4;border-color:#7a68c4;color:#fff} #submit:hover{background:#6956b5}
+  .order{display:flex;gap:14px;flex-wrap:wrap;margin-top:16px;padding:16px 18px;border:2px solid var(--green);border-radius:12px;background:#fff;max-width:760px}
+  .order .slot{display:flex;flex-direction:column;align-items:center;gap:6px}
+  .order .slot .n{font-weight:700;color:#1b4a41}
+  .order select{width:64px;height:52px;font-size:20px;font-weight:700;text-align:center;text-align-last:center;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);cursor:pointer;appearance:none;-webkit-appearance:none}
+  .order select:focus{outline:none;border-color:var(--brand)} .order select:disabled{cursor:default;opacity:1}
+  .order .slot.right select{border-color:var(--ok);background:#d6f3e9} .order .slot.wrong select{border-color:var(--bad);background:#fde3e3}
+  .order .slot .ca{font-size:12px;color:var(--ok);font-weight:700;min-height:16px}
   .savew{margin-left:10px;font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--brand);background:#fff;color:var(--brand);cursor:pointer} .savew.on{background:var(--brand);color:#fff}
   .back{display:none}
   @media(max-width:900px){
@@ -158,9 +177,9 @@
 <body class="home">
 <div class="shell">
   <aside>
-    <div class="brand"><img src="icon.png" alt=""><div><b>기솔의 HSK 5급 스터디룸</b><small id="brandSub">숙제 목록</small></div></div>
+    <div class="brand"><img src="icon.png" alt=""><div><b>기솔의 HSK 5급 스터디룸</b></div></div>
     <nav class="daylist" id="daylist"><p class="muted" style="text-align:center">불러오는 중…</p></nav>
-    <div class="sidetools"><a href="#wrong-notes" id="wrongLink">📕 오답노트</a><a href="#listening-log" id="logLink">🎧 听力 연습기록</a></div>
+    <div class="sidetools"><a href="#listening-log" id="logLink">🎧 听力 연습기록</a><a href="#wrong-notes" id="wrongLink">🔖 오답노트</a></div>
     <div class="sidefoot"><span>© 2026 Bona Kim</span><a href="#" id="tlink">선생님</a></div>
   </aside>
   <main>
@@ -280,6 +299,27 @@ async function listDays(){
   if(!days.length){ try{ const r=await fetch("homework/index.json",{cache:"no-store"}); if(r.ok) days=await r.json(); }catch(e){} }
   return days.sort().reverse();
 }
+// ---------- 사이드바 하위 메뉴 ----------
+let DAYNAV=null, openDay=null;
+function fillSubnav(){
+  document.querySelectorAll("#daylist .subnav").forEach(x=>x.remove());
+  document.querySelectorAll("#daylist a[data-day]").forEach(a=>a.classList.toggle("open",!!DAYNAV&&a.dataset.day===openDay&&openDay===DAYNAV.day));
+  if(!DAYNAV||openDay!==DAYNAV.day) return;
+  const a=document.querySelector(`#daylist a[data-day="${CSS.escape(DAYNAV.day)}"]`); if(!a) return;
+  const nav=document.createElement("div"); nav.className="subnav";
+  nav.innerHTML=DAYNAV.items.map(it=>`<div class="si ${it.id===DAYNAV.active?"on":""} ${it.locked()?"locked":""} ${DAYNAV.openTabs.has(it.id)?"open":""}" data-id="${it.id}"><span>${it.label}</span>${it.kids.length?'<span class="car">▶</span>':""}</div>${it.kids.length&&DAYNAV.openTabs.has(it.id)?`<div class="kids">${it.kids.map((k,j)=>`<div class="kid" data-id="${it.id}" data-j="${j}">${k.label}</div>`).join("")}</div>`:""}`).join("");
+  a.after(nav);
+  nav.querySelectorAll(".si").forEach(el=>el.onclick=()=>{ const id=el.dataset.id; const it=DAYNAV.items.find(x=>x.id===id);
+    if(DAYNAV.active===id&&it.kids.length&&DAYNAV.openTabs.has(id)){ DAYNAV.openTabs.delete(id); fillSubnav(); return; }
+    if(it.kids.length) DAYNAV.openTabs.add(id); DAYNAV.go(id,null); });
+  nav.querySelectorAll(".kid").forEach(el=>el.onclick=()=>{ const it=DAYNAV.items.find(x=>x.id===el.dataset.id); DAYNAV.go(it.id,it.kids[+el.dataset.j]); });
+}
+document.addEventListener("click",e=>{
+  const a=e.target.closest("#daylist a[data-day]"); if(!a) return;
+  const d=a.dataset.day; const cur=decodeURIComponent(location.hash.slice(1));
+  if(d===cur){ e.preventDefault(); openDay=(openDay===d)?null:d; fillSubnav(); }
+  else openDay=d;
+});
 async function renderList(){
   const [days, st]=await Promise.all([listDays(), api({action:"all"})]);
   DAYS=days; serverStatus=(st&&st.days)||{};
@@ -293,8 +333,9 @@ async function renderList(){
     else if(local) b.push(`<span class="badge doing">진행 중</span>`);
     else b.push(`<span class="badge new">새 숙제</span>`);
     if(s?.feedback) b.push(`<span class="badge fb">피드백 ${s.feedback}</span>`);
-    return `<a href="#${d}" class="${d===cur?"active":""}"><div class="d"><span>Day ${days.length-i} <small>${k.m}/${k.d} (${k.wd})</small></span></div><div class="badges">${b.join("")}</div></a>`;
+    return `<a href="#${d}" data-day="${d}" class="${d===cur?"active":""}"><div class="d"><span>Day ${days.length-i} <small>${k.m}/${k.d} (${k.wd})</small></span><span class="car">▶</span></div><div class="badges">${b.join("")}</div></a>`;
   }).join("");
+  fillSubnav();
   loadNotis();
 }
 
@@ -409,6 +450,7 @@ function makeSpeaking(day,sec,si,state,title){
 // ---------- 회차 ----------
 async function renderDay(day){
   document.body.className="day"; for(const k in BLOBS) delete BLOBS[k];
+  if(openDay===null||openDay!==day) openDay=day; if(DAYNAV&&DAYNAV.day!==day) DAYNAV=null;
   const content=$("#content"); content.innerHTML=`<p class="muted">불러오는 중…</p>`; $("#tabs").innerHTML=""; $("#submit").style.display="none";
   let set, ans=null;
   try{ set=await (await fetch(`homework/${day}/set.json`,{cache:"no-store"})).json(); }catch(e){ content.innerHTML=`<div class="empty">숙제를 불러오지 못했어요. (${day})</div>`; return; }
@@ -444,6 +486,19 @@ async function renderDay(day){
         const isPara=sec.type==="reading"&&sec.part===2;
         const imgSrc=sec.image?base+sec.image:(sec.imageUrl||"");
         card.insertAdjacentHTML("beforeend",`<div style="margin-top:10px"><div class="gtab">${rng()}</div><div class="pbox${isPara?" para":""}">${imgSrc?`<img src="${imgSrc}" alt="" loading="lazy" onerror="this.remove()">`:""}${paras}</div></div>`);
+      }
+      if(sec.type==="reading"&&sec.part===2){
+        const ord=document.createElement("div"); ord.className="order"; ord.dataset.si=si;
+        const letters=L.slice(0,sec.questions[0]?.options?.length||5).split("");
+        sec.questions.forEach((q,qi)=>{ const key=`${si}_${q.n}`;
+          const slot=document.createElement("div"); slot.className="slot"; slot.dataset.key=key;
+          slot.innerHTML=`<span class="n">${qi+1}</span><select ${state.submitted||isTeacher()?"disabled":""}><option value="">-</option>${letters.map(l=>`<option ${state.choices[key]===l?"selected":""}>${l}</option>`).join("")}</select><span class="ca"></span>`;
+          slot.querySelector("select").onchange=e=>{ state.choices[key]=e.target.value||undefined; if(!e.target.value) delete state.choices[key]; saveState(state); };
+          ord.appendChild(slot); optEls[key]=[]; });
+        card.insertAdjacentHTML("beforeend",`<p class="inst" style="margin-top:14px">문단 순서대로 1~${sec.questions.length}번 칸에 A~${letters[letters.length-1]}를 골라 넣으세요.</p>`);
+        card.appendChild(ord);
+        if(sec.vocab&&sec.vocab.length) card.insertAdjacentHTML("beforeend",vocabBox(sec.vocab));
+        p.appendChild(card); return;
       }
       const grid=document.createElement("div"); grid.className="qgrid"; grid.style.marginTop="14px";
       if(grouped && sec.questions.length && !sec.passage){ grid.insertAdjacentHTML("beforeend",`<div class="gtab">${rng()}</div>`); }
@@ -505,20 +560,20 @@ async function renderDay(day){
   // 정답·해설 (각 탭 안에 인라인 표시) + 결과 탭
   let reveal=null; let resPanel=null;
   if(ans){
-    resPanel=mkPanel("answers","결과"); resPanel.dataset.locked=!(state.submitted||isTeacher());
-    resPanel.innerHTML=`<div class="card"><h2>채점 결과</h2><p class="inst">${isTeacher()?"선생님 모드에서는 바로 표시돼요.":"제출하면 열려요."}</p><div id="resBody"></div></div>`;
+    resPanel=mkPanel("answers","해설"); resPanel.dataset.locked=!(state.submitted||isTeacher());
+    resPanel.innerHTML=`<div class="card"><h2>채점 결과 · 해설</h2><p class="inst">${isTeacher()?"선생님 모드에서는 바로 표시돼요.":"제출하면 열려요."}</p><div id="resBody"></div></div>`;
     const krBlock=(t)=>t?`<div class="kr">${esc(t)}</div>`:"";
     const shortT=(t)=>t.replace(/\s*\(.*?\)\s*$/,"");
     const wid=(w)=>`${day}|${w.area}|${w.n}`;
     const isSaved=(w)=>store.get("wrongs",[]).some(x=>x.id===wid(w));
-    const syncBtns=()=>content.querySelectorAll(".savew").forEach(b=>{ const w=b._w; if(!w) return; const on=isSaved(w); b.classList.toggle("on",on); b.textContent=on?"✓ 저장됨":"📕 오답노트"; });
+    const syncBtns=()=>content.querySelectorAll(".savew").forEach(b=>{ const w=b._w; if(!w) return; const on=isSaved(w); b.classList.toggle("on",on); b.textContent=on?"✓ 저장됨":"🔖 오답노트"; });
     const wireSave=(bt,w)=>{ bt._w=w; bt.onclick=async(e)=>{ e.stopPropagation(); const all=store.get("wrongs",[]); const id=wid(w); const i=all.findIndex(x=>x.id===id);
         if(i>=0){ all.splice(i,1); store.set("wrongs",all); syncBtns(); if(SUBMIT_URL) post({action:"wrong_remove",day,area:w.area,n:w.n}).catch(()=>{}); toast("오답노트에서 뺐어요"); }
         else { all.push({id,day,...w,status:"복습 전"}); store.set("wrongs",all); syncBtns(); if(SUBMIT_URL) post({action:"wrong_add",day,area:w.area,n:w.n,q:w.q,mine:w.mine,answer:w.answer,explain:w.explain}).catch(()=>{}); toast("오답노트에 저장했어요"); } };
       syncBtns(); };
     reveal=()=>{
       resPanel.dataset.locked="false"; paintTabs();
-      content.querySelectorAll(".exp,.sol").forEach(e=>e.remove());
+      content.querySelectorAll(".exp,.sol,.q>.savew").forEach(e=>e.remove());
       const tiles=[]; const wrongs=[];
       set.sections.forEach((sec,si)=>{
         if(sec.type!=="listening"&&sec.type!=="reading") return;
@@ -526,12 +581,17 @@ async function renderDay(day){
         sec.questions.forEach(q=>{
           const a=list.find(x=>String(x.n)===String(q.n)); if(!a) return; n++;
           const key=`${si}_${q.n}`; const mine=state.choices[key]; const ok=mine===a.answer; if(ok) right++;
-          (optEls[key]||[]).forEach(el=>{ el.classList.remove("right","wrong"); if(el.dataset.l===a.answer) el.classList.add("right"); else if(el.dataset.l===mine&&!ok) el.classList.add("wrong"); });
+          (optEls[key]||[]).forEach((el,i)=>{ el.classList.remove("right","wrong"); if(el.dataset.l===a.answer) el.classList.add("right"); else if(el.dataset.l===mine&&!ok) el.classList.add("wrong");
+            el.querySelectorAll(".optkr").forEach(x=>x.remove());
+            const o=q.options[i]; const kr=(a.opt_kr||[])[i]||(sec.type==="reading"&&sec.part===2?(ans.reading_part2_kr||{})[o]:""); const py=(a.opt_py||[])[i]||"";
+            if(kr||py) el.insertAdjacentHTML("beforeend",`<span class="optkr">${py?`<span class="py">${py}</span>`:""}${kr?esc(kr):""}</span>`); });
+          const slot=content.querySelector(`.order .slot[data-key="${key}"]`);
+          if(slot){ slot.classList.remove("right","wrong"); slot.classList.add(ok?"right":"wrong"); slot.querySelector("select").disabled=true; slot.querySelector(".ca").textContent=ok?"⭕":"정답 "+a.answer; }
           const qbody=(optEls[key]||[])[0]?.closest(".body");
           const item={area:shortT(sec.title),n:q.n,q:q.q||"",mine:mine||"",answer:a.answer,explain:a.explain||""};
-          if(qbody) qbody.insertAdjacentHTML("beforeend",`<div class="exp">정답 <b class="ok">${a.answer}</b>${isTeacher()?"":` · 내 답 <b class="${ok?"ok":"bad"}">${mine||"-"}</b> ${ok?"⭕":"❌"}`}${isTeacher()?"":`<button class="savew" data-k="${key}">📕 오답노트</button>`}${a.explain?`<div style="margin-top:4px">${a.explain}</div>`:""}</div>`);
+          if(qbody) qbody.insertAdjacentHTML("beforeend",`<div class="exp">정답 <b class="ok">${a.answer}</b>${isTeacher()?"":` · 내가 고른 답 <b class="${ok?"ok":"bad"}">${mine||"-"}</b> ${ok?"⭕":"❌"}`}${isTeacher()?"":`<button class="savew" data-k="${key}">🔖 오답노트</button>`}${a.explain?`<div style="margin-top:4px">${a.explain}</div>`:""}</div>`);
           if(!ok&&!isTeacher()) wrongs.push(item);
-          const sbtn=qbody?.querySelector(`.savew[data-k="${key}"]`); if(sbtn) wireSave(sbtn,item);
+          const sbtn=qbody?.querySelector(`.savew[data-k="${key}"]`); if(sbtn){ const qbox=qbody.closest(".q"); if(qbox) qbox.appendChild(sbtn); wireSave(sbtn,item); }
         });
         const gi=groups[sec.type].findIndex(x=>x[1]===si);
         const card=content.querySelector(`.panel[data-id=${sec.type}]`)?.querySelectorAll(".card")[gi];
@@ -540,7 +600,10 @@ async function renderDay(day){
           if(sec.type==="listening"){ const first=list.find(x=>String(x.n)===String(sec.questions[0]?.n)); const tr=(ans.listening_translation||{})[String(sec.questions[0]?.n)];
             if(first?.script) inner+=`<div class="muted" style="margin-top:6px">대본</div><div class="ans zh" style="max-width:760px">${first.script}</div>`; inner+=krBlock(tr); }
           else { inner+=krBlock((ans.reading_translation||{})["part"+sec.part]); }
-          if(inner) card.insertAdjacentHTML("beforeend",`<details class="sol" open><summary>대본·해석 보기</summary><div class="in">${inner}</div></details>`);
+          if(sec.vocab?.length){ inner+=vocabBox(sec.vocab,true).replace('class="vocab"','class="vocab" style="max-width:none"'); card.querySelectorAll(":scope > details.vocab").forEach(x=>x.style.display="none"); }
+          if(inner){ const html=`<details class="sol" open><summary>${sec.type==="listening"?"대본·해석·어휘 보기":"지문 해석·어휘 보기"}</summary><div class="in">${inner}</div></details>`;
+            const anchor=card.querySelector(".pbox")?.parentElement||card.querySelector(".player")||card.querySelector(".inst")||card.querySelector("h2");
+            if(anchor) anchor.insertAdjacentHTML("afterend",html); else card.insertAdjacentHTML("beforeend",html); }
         }
         if(n) tiles.push({label:shortT(sec.title),val:`${isTeacher()?"-":right} / ${n}`});
       });
@@ -568,11 +631,21 @@ async function renderDay(day){
         else if(sec.passage){ const paras=sec.passage.split(/\n\s*\n/).map(p=>`<p>${p.replace(/\n/g,"<br>")}</p>`).join(""); html+=`<div class="muted">중국어 지문</div><div class="pbox${sec.part===2?" para":""}" style="margin-top:4px">${paras}</div>`;
           const tr=(ans.reading_translation||{})["part"+sec.part]; if(tr) html+=`<div class="muted" style="margin-top:8px">한국어 해석</div><div class="kr">${esc(tr)}</div>`; }
         if(sec.vocab?.length) html+=vocabBox(sec.vocab,true).replace('class="vocab"','class="vocab" style="max-width:none"');
+        if(sec.type==="reading"&&sec.part===2){
+          const kr=ans.reading_part2_kr||{};
+          if(Object.keys(kr).length) html+=`<div class="muted" style="margin-top:14px">문단별 해석</div>${Object.keys(kr).sort().map(k=>`<div class="ropt"><b>${k}</b><span class="kr2">${esc(kr[k])}</span></div>`).join("")}`;
+          html+=`<div class="muted" style="margin-top:14px">순서 정답</div><div class="rq"><div class="order" style="border:0;padding:0;margin:0">${sec.questions.map((q,qi)=>{ const a=list.find(x=>String(x.n)===String(q.n))||{}; const mine=state.choices[`${si}_${q.n}`]; const ok=mine===a.answer;
+              return `<div class="slot ${isTeacher()?"":(ok?"right":"wrong")}"><span class="n">${qi+1}</span><select disabled><option>${isTeacher()?a.answer:(mine||"-")}</option></select><span class="ca">${isTeacher()||ok?"":"정답 "+a.answer}</span></div>`; }).join("")}</div>
+            <div class="muted" style="margin-top:10px">정답 순서: <b style="color:var(--ok)">${sec.questions.map(q=>(list.find(x=>String(x.n)===String(q.n))||{}).answer).join(" → ")}</b></div>
+            ${(()=>{ const ex=sec.questions.map(q=>(list.find(x=>String(x.n)===String(q.n))||{}).explain).filter(Boolean); return ex.length?`<div class="exp" style="margin-top:8px">${[...new Set(ex)].join("<br>")}</div>`:""; })()}</div>`;
+          sec.questions.forEach(q=>{ const a=list.find(x=>String(x.n)===String(q.n)); if(!a) return; const mine=state.choices[`${si}_${q.n}`]; if(mine!==a.answer&&!isTeacher()) items.push({area:shortT(sec.title),n:q.n,q:(q.q||"")+" (문단 순서)",mine:mine||"",answer:a.answer,explain:a.explain||""}); });
+          blocks.push(html+`</section>`); return;
+        }
         html+=`<div class="muted" style="margin-top:14px">문제 · 선택지</div>`;
         sec.questions.forEach(q=>{
           const a=list.find(x=>String(x.n)===String(q.n)); if(!a) return; const key=`${si}_${q.n}`; const mine=state.choices[key]; const ok=mine===a.answer;
           const item={area:shortT(sec.title),n:q.n,q:q.q||"",mine:mine||"",answer:a.answer,explain:a.explain||""}; items.push(item);
-          html+=`<div class="rq"><div class="rqh"><b>${q.n}.</b> <span class="zh">${q.q||""}</span>${a.q_kr?`<span class="kr2">${esc(a.q_kr)}</span>`:""}${isTeacher()?"":`<span class="${ok?"okb":"badb"}">${ok?"⭕ 정답":"❌ 내 답 "+(mine||"-")}</span><button class="savew" data-i="${items.length-1}">📕 오답노트</button>`}</div>`;
+          html+=`<div class="rq"><div class="rqh"><b>${q.n}.</b> <span class="zh">${q.q||""}</span>${a.q_kr?`<span class="kr2">${esc(a.q_kr)}</span>`:""}${isTeacher()?"":`<span class="${ok?"okb":"badb"}">${ok?"⭕ 정답":"❌ 내가 고른 답 "+(mine||"-")}</span><button class="savew" data-i="${items.length-1}">🔖 오답노트</button>`}</div>`;
           q.options.forEach((o,i)=>{ const Lt=L[i]; const kr=(a.opt_kr||[])[i]||(sec.type==="reading"&&sec.part===2?(ans.reading_part2_kr||{})[o]:""); const py=(a.opt_py||[])[i]||"";
             html+=optLine(`<b>${Lt}</b> ${o}`,kr,py,(Lt===a.answer?"right":"")+(Lt===mine&&!ok?" wrong":"")); });
           if(a.explain) html+=`<div class="exp" style="margin-top:6px">${a.explain}</div>`;
@@ -639,6 +712,27 @@ async function renderDay(day){
       active=p.id; paintTabs(); window.scrollTo({top:0});
     });
   };
+  // 사이드바 하위 메뉴 데이터
+  { const shortT=(t)=>(t||"").replace(/\s*\(.*?\)\s*$/,"");
+    const kidsOf=(type)=>{ const g=groups[type]; return g.map(([sec,si],gi)=>{ let lab=shortT(sec.title).replace(/^(듣기|독해|쓰기|말하기)\s*/,"");
+      if(sec.questions?.length){ const ns=sec.questions.map(q=>q.n); lab+=` · ${ns[0]}${ns.length>1?"~"+ns[ns.length-1]:""}번`; }
+      else if(g.filter(([s2])=>shortT(s2.title)===shortT(sec.title)).length>1) lab+=` · ${g.slice(0,gi+1).filter(([s2])=>shortT(s2.title)===shortT(sec.title)).length}`;
+      return {label:lab,type,gi,si}; }); };
+    const allKids=[...kidsOf("listening"),...kidsOf("reading"),...kidsOf("writing"),...kidsOf("speaking")].map(k=>({...k,label:({listening:"듣기 ",reading:"독해 ",writing:"쓰기 ",speaking:"말하기 "})[k.type]+k.label}));
+    const prevOpen=DAYNAV&&DAYNAV.day===day?DAYNAV.openTabs:new Set();
+    DAYNAV={day,active:null,openTabs:prevOpen,items:panels.map(p=>({id:p.id,label:p.label,locked:()=>p.el.dataset.locked==="true",kids:groups[p.id]?kidsOf(p.id):(p.id==="answers"?allKids:[])})),
+      go:async(id,kid)=>{ const p=panels.find(x=>x.id===id); if(!p) return;
+        if(p.el.dataset.locked==="true"){ if(!(await ask("아직 제출 전이에요. 그래도 볼까요?",{okText:"보기"}))) return; reveal&&reveal(); }
+        active=id; paintTabs();
+        if(!kid){ window.scrollTo({top:0}); return; }
+        let el=null;
+        if(id==="answers") el=document.getElementById("res-"+kid.si);
+        else el=p.el.querySelectorAll(":scope > .card")[kid.gi]||p.el.querySelectorAll(".card")[kid.gi];
+        if(el) setTimeout(()=>el.scrollIntoView({behavior:"smooth",block:"start"}),30); } };
+  }
+  { const _pt=paintTabs; paintTabs=()=>{ _pt(); if(DAYNAV){ DAYNAV.active=active; fillSubnav(); } };
+    // 탭 버튼 클릭도 사이드바 갱신
+  }
   if(pendingTab && panels.find(p=>p.id===pendingTab)){ active=pendingTab; pendingTab=null; }
   paintTabs();
   if(reveal && (state.submitted||isTeacher())) reveal();
@@ -744,7 +838,7 @@ async function renderWrongs(){
   const paint=(filter)=>{
     const list=rows.filter(x=>filter==="all"||(filter==="todo"?x.status!=="복습 완료":x.status==="복습 완료"));
     c.innerHTML=`<div class="card"><div class="row" style="justify-content:space-between"><div class="chips"><span class="chip ${filter==="todo"?"on":""}" data-f="todo">복습 전</span><span class="chip ${filter==="done"?"on":""}" data-f="done">복습 완료</span><span class="chip ${filter==="all"?"on":""}" data-f="all">전체</span></div><span class="muted">${list.length}개</span></div>
-      <div style="margin-top:14px">${list.length?list.map(w=>`<div class="wrow ${w.status==="복습 완료"?"done":""}"><div class="meta">${w.day?String(w.day).slice(5,10).replace("-","/"):""}<br>${esc(String(w.area))} ${w.n}번</div><div class="body"><div class="zh" style="font-size:16px">${w.q||""}</div><div class="muted">내 답 ${esc(String(w.mine||"-"))} → 정답 <b style="color:var(--ok)">${esc(String(w.answer))}</b></div>${w.explain?`<div class="muted" style="margin-top:4px">${w.explain}</div>`:""}</div><button class="btn sec" data-id="${w.id}">${w.status==="복습 완료"?"다시 복습":"복습 완료"}</button></div>`).join(""):`<p class="muted">여기에 해당하는 문제가 없어요.</p>`}</div></div>`;
+      <div style="margin-top:14px">${list.length?list.map(w=>`<div class="wrow ${w.status==="복습 완료"?"done":""}"><div class="meta">${w.day?String(w.day).slice(5,10).replace("-","/"):""}<br>${esc(String(w.area))} ${w.n}번</div><div class="body"><div class="zh" style="font-size:16px">${w.q||""}</div><div class="muted">내가 고른 답 ${esc(String(w.mine||"-"))} → 정답 <b style="color:var(--ok)">${esc(String(w.answer))}</b></div>${w.explain?`<div class="muted" style="margin-top:4px">${w.explain}</div>`:""}</div><button class="btn sec" data-id="${w.id}">${w.status==="복습 완료"?"다시 복습":"복습 완료"}</button></div>`).join(""):`<p class="muted">여기에 해당하는 문제가 없어요.</p>`}</div></div>`;
     c.querySelectorAll(".chip").forEach(ch=>ch.onclick=()=>paint(ch.dataset.f));
     c.querySelectorAll("button[data-id]").forEach(bt=>bt.onclick=async()=>{
       const w=rows.find(x=>x.id===bt.dataset.id); const ns=w.status==="복습 완료"?"복습 전":"복습 완료"; w.status=ns;
