@@ -2,31 +2,197 @@
   "student": "기솔",
   "exam_target": "2027-01 중순 (新版HSK 五级, 3.0)",
   "start_date": "2026-11-10",
-  "lesson_days": [],
+  "lesson_days": [
+    0,
+    2,
+    4
+  ],
   "note_lesson_days": "수업 요일(0=월 … 6=일). 수업일에는 쓰기 섹션 제외.",
   "engine": "C",
   "phases": [
-    {"name": "유형별 훈련", "from": "2026-11-10", "to": "2026-12-13", "mode": "by_type"},
-    {"name": "혼합 세트",   "from": "2026-12-14", "to": "2027-01-03", "mode": "mixed", "saturday_mini_mock": true},
-    {"name": "실전",        "from": "2027-01-04", "to": "2027-01-31", "mode": "mock"}
+    {
+      "name": "유형별 훈련",
+      "from": "2026-11-10",
+      "to": "2026-12-13",
+      "mode": "by_type"
+    },
+    {
+      "name": "혼합 세트",
+      "from": "2026-12-14",
+      "to": "2027-01-03",
+      "mode": "mixed",
+      "saturday_mini_mock": true
+    },
+    {
+      "name": "실전",
+      "from": "2027-01-04",
+      "to": "2027-01-31",
+      "mode": "mock"
+    }
   ],
   "weekly_rotation": {
-    "0": {"listening": {"part1": 5, "part2_passages": 1}, "reading": {"part3_passages": 1, "part1": 3}, "writing": "part2", "speaking": "part1"},
-    "1": {"listening": {"part1": 4, "part2_passages": 1}, "reading": {"part3_passages": 1, "part2": 3}, "writing": "part1", "speaking": "part3"},
-    "2": {"listening": {"part1": 5, "part2_passages": 1}, "reading": {"part3_passages": 1, "part1": 3}, "writing": "part2", "speaking": "part2"},
-    "3": {"listening": {"part1": 4, "part2_passages": 1}, "reading": {"part3_passages": 1, "part2": 3}, "writing": "part1", "speaking": "part1"},
-    "4": {"listening": {"part1": 5, "part2_passages": 1}, "reading": {"part3_passages": 1, "part1": 3}, "writing": "part2", "speaking": "part3"},
-    "5": {"listening": {"part1": 4, "part2_passages": 1}, "reading": {"part3_passages": 1, "part2": 3}, "writing": "part2", "speaking": "part2"},
-    "6": {"review": true, "note": "이번 주 오답 변형 세트 (시트 연결 전에는 그 주 유형 복습 세트)"}
+    "0": {
+      "listening": {
+        "part1": 5,
+        "part2_passages": 1
+      },
+      "reading": {
+        "part3_passages": 1,
+        "part1": 3
+      },
+      "writing": "part2",
+      "speaking": "part1"
+    },
+    "1": {
+      "listening": {
+        "part1": 4,
+        "part2_passages": 1
+      },
+      "reading": {
+        "part3_passages": 1,
+        "part2": 3
+      },
+      "writing": "part1",
+      "speaking": "part3"
+    },
+    "2": {
+      "listening": {
+        "part1": 5,
+        "part2_passages": 1
+      },
+      "reading": {
+        "part3_passages": 1,
+        "part1": 3
+      },
+      "writing": "part2",
+      "speaking": "part2"
+    },
+    "3": {
+      "listening": {
+        "part1": 4,
+        "part2_passages": 1
+      },
+      "reading": {
+        "part3_passages": 1,
+        "part2": 3
+      },
+      "writing": "part1",
+      "speaking": "part1"
+    },
+    "4": {
+      "listening": {
+        "part1": 5,
+        "part2_passages": 1
+      },
+      "reading": {
+        "part3_passages": 1,
+        "part1": 3
+      },
+      "writing": "part2",
+      "speaking": "part3"
+    },
+    "5": {
+      "listening": {
+        "part1": 4,
+        "part2_passages": 1
+      },
+      "reading": {
+        "part3_passages": 1,
+        "part2": 3
+      },
+      "writing": "part2",
+      "speaking": "part2"
+    },
+    "6": {
+      "review": true,
+      "note": "이번 주 오답 변형 세트 (시트 연결 전에는 그 주 유형 복습 세트)"
+    }
   },
   "type_schedule_by_week": {
-    "1": {"listening1": ["장소·위치", "직업·신분·관계"], "listening2": ["이야기"], "reading3": ["육하원칙"]},
-    "2": {"listening1": ["행동", "특정 명사"], "listening2": ["설명문"], "reading3": ["세부사항"]},
-    "3": {"listening1": ["이유·원인", "상태·상황"], "listening2": ["논설문"], "reading3": ["일치·불일치"]},
-    "4": {"listening1": ["혼합"], "listening2": ["혼합"], "reading3": ["중심내용"]},
-    "5": {"listening1": ["혼합"], "listening2": ["혼합"], "reading3": ["의미파악"]}
+    "1": {
+      "listening1": [
+        "장소·위치",
+        "직업·신분·관계"
+      ],
+      "listening2": [
+        "이야기"
+      ],
+      "reading3": [
+        "육하원칙"
+      ]
+    },
+    "2": {
+      "listening1": [
+        "행동",
+        "특정 명사"
+      ],
+      "listening2": [
+        "설명문"
+      ],
+      "reading3": [
+        "세부사항"
+      ]
+    },
+    "3": {
+      "listening1": [
+        "이유·원인",
+        "상태·상황"
+      ],
+      "listening2": [
+        "논설문"
+      ],
+      "reading3": [
+        "일치·불일치"
+      ]
+    },
+    "4": {
+      "listening1": [
+        "혼합"
+      ],
+      "listening2": [
+        "혼합"
+      ],
+      "reading3": [
+        "중심내용"
+      ]
+    },
+    "5": {
+      "listening1": [
+        "혼합"
+      ],
+      "listening2": [
+        "혼합"
+      ],
+      "reading3": [
+        "의미파악"
+      ]
+    }
   },
-  "speaking_items_per_day": {"part1": 2, "part2": 1, "part3": 2},
+  "speaking_items_per_day": {
+    "part1": 2,
+    "part2": 1,
+    "part3": 2
+  },
   "vocab_rule": "5급 초과 단어 비율 3% 이하 (tools/vocab_check.py). 고유명사 제외.",
-  "topic_log": "homework/topics_used.json 에 회차별 사용 토픽 기록, 2주 내 재사용 금지"
+  "topic_log": "homework/topics_used.json 에 회차별 사용 토픽 기록, 2주 내 재사용 금지",
+  "vocab_progress": {
+    "as_of": "2026-11-10",
+    "window": 400,
+    "rule": "HSK4 전체 + 5급 단어장 순서 1~400번(현재 블록). 블록은 400개 단위로 올라가며(401~800 …) 단어장 진도가 블록 끝에 닿으면 다음 블록 포함. 1,600개를 다 돌면 5급 전체에서 랜덤.",
+    "textbook": "교재(해커스) 유형별 핵심 어휘·표현(spec/textbook_patterns.md 2~6장)은 블록과 무관하게 항상 사용 가능하며, 그날 유형의 교재 어휘를 지문·보기에 2~3개 이상 넣는다"
+  },
+  "difficulty_ramp": {
+    "until": "2026-11-30",
+    "listening_dialog": "4턴 위주 60~80자",
+    "listening_passage": "150~200자",
+    "reading_passage": "300~350자",
+    "note": "12월부터 SPEC 기준 분량으로"
+  },
+  "audio": {
+    "engine": "C",
+    "model": "zipvoice fp32",
+    "steps": 16,
+    "speed": 0.9,
+    "denoise": true
+  }
 }

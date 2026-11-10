@@ -1,7 +1,7 @@
 {
  "female1": {
-  "wav": "female1.wav",
-  "text": "各位村民, 大家新年好! 近期, 湖北省武汉市等多个地区"
+  "wav": "female_clean.wav",
+  "text": "各位听众朋友，大家好。今天我们来聊一聊，怎样安排一次轻松的周末旅行。"
  },
  "female2": {
   "wav": "female2.wav",

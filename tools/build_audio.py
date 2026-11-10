@@ -21,9 +21,10 @@ _zip=None; _mat=None
 def zipvoice():
     global _zip
     if _zip is None:
-        Z=f"{M}/sherpa-onnx-zipvoice-distill-int8-zh-en-emilia"
+        Z=f"{M}/sherpa-onnx-zipvoice-distill-int8-zh-en-emilia"; ZF=f"{M}/sherpa-onnx-zipvoice-distill-zh-en-emilia"
+        enc,dec=(f"{ZF}/text_encoder.onnx",f"{ZF}/fm_decoder.onnx") if os.path.exists(f"{ZF}/fm_decoder.onnx") and os.environ.get("ZV_INT8")!="1" else (f"{Z}/encoder.int8.onnx",f"{Z}/decoder.int8.onnx")
         _zip=sherpa_onnx.OfflineTts(sherpa_onnx.OfflineTtsConfig(model=sherpa_onnx.OfflineTtsModelConfig(
-            zipvoice=sherpa_onnx.OfflineTtsZipvoiceModelConfig(tokens=f"{Z}/tokens.txt",encoder=f"{Z}/encoder.int8.onnx",decoder=f"{Z}/decoder.int8.onnx",
+            zipvoice=sherpa_onnx.OfflineTtsZipvoiceModelConfig(tokens=f"{Z}/tokens.txt",encoder=enc,decoder=dec,
                 vocoder=f"{M}/vocos_24khz.onnx",lexicon=f"{Z}/lexicon.txt,{M}/lexicon-en-us.txt"),num_threads=os.cpu_count() or 4),max_num_sentences=1))
     return _zip
 def matcha(texts):
@@ -45,7 +46,7 @@ def norm(y,sr):
     if len(yt)>SR*0.3: y=yt
     return y/(np.abs(y).max()+1e-6)*0.8
 
-def synth_zip(spk,text,speed=1.0,steps=4):
+def synth_zip(spk,text,speed=1.0,steps=int(os.environ.get("ZV_STEPS","16"))):
     p=PROMPTS[SPK2PROMPT.get(spk,"female1")]
     y,sr=sf.read(os.path.join(HERE,"prompts",p["wav"]),dtype="float32")
     if y.ndim>1: y=y[:,0]
@@ -63,9 +64,9 @@ def build(script,out,engine="C"):
         spk=it.get("spk","F"); text=it["text"]; speed=it.get("speed",1.0)
         if engine=="B" and spk.startswith("F"): y=synth_mat(spk,text,speed,ftexts)
         else: y=synth_zip(spk,text,speed)
-        parts.append(y); parts.append(np.zeros(int(SR*it.get("gap",0.6)),dtype=np.float32))
+        parts.append(y); parts.append(np.zeros(int(SR*it.get("gap",0.9)),dtype=np.float32))
     y=np.concatenate(parts); tmp=out+".wav"; sf.write(tmp,y,SR)
-    subprocess.run(["ffmpeg","-y","-loglevel","error","-i",tmp,"-b:a","64k",out],check=True); os.remove(tmp)
+    subprocess.run(["ffmpeg","-y","-loglevel","error","-i",tmp,"-af","loudnorm=I=-17:TP=-1.5","-b:a","160k",out],check=True); os.remove(tmp)
     print(f"{out}: {len(y)/SR:.1f}s audio, built in {time.time()-t0:.0f}s")
     return out
 
