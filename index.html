@@ -165,6 +165,10 @@
   .order .slot .ca{font-size:12px;color:var(--ok);font-weight:700;min-height:16px}
   .savew{margin-left:10px;font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--brand);background:#fff;color:var(--brand);cursor:pointer} .savew.on{background:var(--brand);color:#fff}
   .back{display:none}
+  .sidetog{appearance:none;border:1px solid var(--line);background:#fff;color:#1b4a41;width:36px;height:36px;border-radius:10px;font-size:16px;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center}
+  .sidetog:hover{border-color:var(--brand);color:var(--brand)}
+  aside{transition:margin-left .2s ease} body.sideclosed aside{margin-left:-236px}
+  @media(max-width:900px){ .sidetog{display:none} body.sideclosed aside{margin-left:0} }
   @media(max-width:900px){
     .shell{flex-direction:column} aside{width:100%;height:auto;position:static;border-right:0}
     body.day aside{display:none} body.home main{display:none}
@@ -184,6 +188,7 @@
   </aside>
   <main>
     <div class="topbar">
+      <button class="sidetog" id="sidetog" title="목록 열기/닫기">☰</button>
       <button class="btn sec back" id="back">‹ 목록</button>
       <h1 id="title">숙제를 선택하세요</h1>
       <nav class="tabs" id="tabs"></nav>
@@ -450,7 +455,7 @@ function makeSpeaking(day,sec,si,state,title){
 
 // ---------- 회차 ----------
 async function renderDay(day){
-  document.body.className="day"; for(const k in BLOBS) delete BLOBS[k];
+  document.body.className="day"+(store.get("sideClosed",false)?" sideclosed":""); for(const k in BLOBS) delete BLOBS[k];
   if(openDay===null||openDay!==day) openDay=day; if(DAYNAV&&DAYNAV.day!==day) DAYNAV=null;
   const content=$("#content"); content.innerHTML=`<p class="muted">불러오는 중…</p>`; $("#tabs").innerHTML=""; $("#submit").style.display="none";
   let set, ans=null;
@@ -781,7 +786,7 @@ async function renderDay(day){
 }
 // ---------- 听力 연습기록 ----------
 async function renderLog(){
-  document.body.className="day";
+  document.body.className="day"+(store.get("sideClosed",false)?" sideclosed":"");
   $("#title").innerHTML=`听力 연습기록<small>듣기 연습한 문제 기록</small>`; $("#tabs").innerHTML=""; $("#submit").style.display="none";
   document.querySelectorAll(".daylist a").forEach(a=>a.classList.remove("active")); $("#logLink").classList.add("active");
   const c=$("#content");
@@ -835,7 +840,7 @@ async function renderLog(){
 }
 // ---------- 오답노트 ----------
 async function renderWrongs(){
-  document.body.className="day";
+  document.body.className="day"+(store.get("sideClosed",false)?" sideclosed":"");
   $("#title").innerHTML=`오답노트<small>틀린 문제 모음</small>`; $("#tabs").innerHTML=""; $("#submit").style.display="none";
   document.querySelectorAll(".daylist a").forEach(a=>a.classList.remove("active")); $("#wrongLink").classList.add("active");
   const c=$("#content"); c.innerHTML=`<p class="muted">불러오는 중…</p>`;
@@ -858,7 +863,7 @@ async function renderWrongs(){
 }
 function vocabBox(v,open){ return `<details class="vocab"${open?" open":""}><summary>📚 어휘 정리 (${v.length})</summary><table>${v.map(x=>`<tr><td class="w zh">${x.w}</td><td class="py">${x.py||""}</td><td>${x.kr||""}</td></tr>`).join("")}</table></details>`; }
 function renderHome(){
-  document.body.className="home";
+  document.body.className="home"+(store.get("sideClosed",false)?" sideclosed":"");
   $("#title").textContent="숙제를 선택하세요"; $("#tabs").innerHTML=""; $("#submit").style.display="none";
   $("#content").innerHTML=`<div class="empty">왼쪽에서 날짜를 고르면 숙제가 열려요.</div>`;
   document.querySelectorAll(".daylist a").forEach(a=>a.classList.remove("active"));
@@ -870,6 +875,9 @@ async function route(){
   $("#logLink").classList.remove("active"); $("#wrongLink").classList.remove("active");
   if(h==="listening-log") renderLog(); else if(h==="wrong-notes") renderWrongs(); else if(h) renderDay(h); else { renderHome(); renderList(); }
 }
+// ---------- 왼쪽 목록 열기/닫기 ----------
+if(store.get("sideClosed",false)) document.body.classList.add("sideclosed");
+$("#sidetog").onclick=()=>{ const c=!document.body.classList.contains("sideclosed"); document.body.classList.toggle("sideclosed",c); store.set("sideClosed",c); };
 window.addEventListener("hashchange",route);
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden) renderList(); });
 route();
