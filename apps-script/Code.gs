@@ -14,11 +14,12 @@ const NTFY_STUDENT  = "";              // ntfy 토픽 (예: gisol-hsk5-7f3k) : �
 const NTFY_TEACHER  = "";              // ntfy 토픽 : 네 폰 푸시 알림 (제출 시)
 // ===============================================================
 
-const SH_SUB = "제출", SH_FB = "피드백", SH_LOG = "듣기기록", FOLDER_NAME = "HSK5 숙제 녹음";
+const SH_SUB = "제출", SH_FB = "피드백", SH_LOG = "듣기기록", SH_WRONG = "오답노트", FOLDER_NAME = "HSK5 숙제 녹음";
 const PAGES_BASE = APP_URL + "homework/";
 const SUB_HEADERS = ["제출 시각", "숙제 날짜", "학생", "듣기·독해 답", "재생 횟수", "자동 채점", "오답 문항", "쓰기 글자수", "쓰기 전문", "말하기", "녹음 파일", "요약", "쓰기 소요시간"];
 const FB_HEADERS  = ["작성 시각", "숙제 날짜", "영역", "코멘트"];
 const LOG_HEADERS = ["시각", "학생", "출처", "문제 위치", "연습 방식", "결과", "메모"];
+const WRONG_HEADERS = ["기록 시각", "숙제 날짜", "영역", "번호", "문제", "내 답", "정답", "해설", "상태"];
 
 // ---------- 라우팅 ----------
 function doGet(e) {
@@ -29,6 +30,7 @@ function doGet(e) {
     if (p.action === "pin")    return out({ ok: p.pin === TEACHER_PIN });
     if (p.action === "logs")   return out({ ok: true, logs: listLogs() });
     if (p.action === "feed")   return out({ ok: true, feed: feed() });
+    if (p.action === "wrongs") return out({ ok: true, wrongs: listWrongs() });
     return out({ ok: true, message: "HSK5 스터디룸 서버 동작 중" });
   } catch (err) { return out({ ok: false, error: String(err) }); }
 }
@@ -38,6 +40,9 @@ function doPost(e) {
     const d = JSON.parse(e.postData.contents);
     if (d.action === "feedback") return out(saveFeedback(d));
     if (d.action === "log")      return out(saveLog(d));
+    if (d.action === "wrong_status") return out(setWrongStatus(d));
+    if (d.action === "wrong_add") return out(addWrong(d));
+    if (d.action === "wrong_remove") return out(removeWrong(d));
     return out(saveSubmission(d));
   } catch (err) { return out({ ok: false, error: String(err) }); }
 }
@@ -90,6 +95,35 @@ function saveFeedback(d) {
   sh.appendRow([new Date(), d.day, d.cat || "", d.text || ""]);
   notify("student", "💬 선생님 피드백 도착 (" + d.day + ")", (d.text || "").slice(0, 140), d.day);
   return { ok: true };
+}
+
+// ---------- 오답노트 ----------
+function listWrongs() {
+  const sh = getSheet(SH_WRONG, WRONG_HEADERS); const v = sh.getDataRange().getValues();
+  return v.slice(1).map(function (r, i) { return { row: i + 2, time: r[0], day: fmtDay(r[1]), area: r[2], n: r[3], q: r[4], mine: r[5], answer: r[6], explain: r[7], status: r[8] }; }).filter(function (x) { return x.day; });
+}
+function setWrongStatus(d) {
+  const sh = getSheet(SH_WRONG, WRONG_HEADERS); sh.getRange(Number(d.row), 9).setValue(d.status || "복습 전"); return { ok: true };
+}
+function addWrong(d) {
+  const sh = getSheet(SH_WRONG, WRONG_HEADERS); const v = sh.getDataRange().getValues();
+  for (var i = 1; i < v.length; i++) if (String(v[i][1]) === String(d.day) && String(v[i][2]) === String(d.area) && String(v[i][3]) === String(d.n)) return { ok: true, row: i + 1, dup: true };
+  sh.appendRow([new Date(), d.day, d.area, d.n, d.q || "", d.mine || "", d.answer || "", d.explain || "", "복습 전"]);
+  return { ok: true, row: sh.getLastRow() };
+}
+function removeWrong(d) {
+  const sh = getSheet(SH_WRONG, WRONG_HEADERS); const v = sh.getDataRange().getValues();
+  for (var i = v.length - 1; i >= 1; i--) if (String(v[i][1]) === String(d.day) && String(v[i][2]) === String(d.area) && String(v[i][3]) === String(d.n)) { sh.deleteRow(i + 1); return { ok: true }; }
+  return { ok: true };
+}
+function fetchSet(day) {
+  try { const res = UrlFetchApp.fetch(PAGES_BASE + day + "/set.json", { muteHttpExceptions: true }); if (res.getResponseCode() === 200) return JSON.parse(res.getContentText()); } catch (e) {}
+  return null;
+}
+function findQ(setj, type, n) {
+  if (!setj) return null;
+  for (var i = 0; i < setj.sections.length; i++) { var s = setj.sections[i]; if (s.type !== type) continue; for (var j = 0; j < (s.questions || []).length; j++) if (String(s.questions[j].n) === String(n)) return s.questions[j]; }
+  return null;
 }
 
 // ---------- 듣기 연습기록 ----------

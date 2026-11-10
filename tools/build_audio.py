@@ -66,7 +66,7 @@ def build(script,out,engine="C"):
         else: y=synth_zip(spk,text,speed)
         parts.append(y); parts.append(np.zeros(int(SR*it.get("gap",0.9)),dtype=np.float32))
     y=np.concatenate(parts); tmp=out+".wav"; sf.write(tmp,y,SR)
-    subprocess.run(["ffmpeg","-y","-loglevel","error","-i",tmp,"-af","loudnorm=I=-17:TP=-1.5","-b:a","160k",out],check=True); os.remove(tmp)
+    subprocess.run(["ffmpeg","-y","-loglevel","error","-i",tmp,"-af",f"atempo={os.environ.get('SLOW','0.9')},loudnorm=I=-17:TP=-1.5","-b:a","160k",out],check=True); os.remove(tmp)
     print(f"{out}: {len(y)/SR:.1f}s audio, built in {time.time()-t0:.0f}s")
     return out
 
