@@ -28,6 +28,7 @@ function doGet(e) {
     if (p.action === "status") return out({ ok: true, ...statusDay(p.day, p.pin === TEACHER_PIN) });
     if (p.action === "pin")    return out({ ok: p.pin === TEACHER_PIN });
     if (p.action === "logs")   return out({ ok: true, logs: listLogs() });
+    if (p.action === "feed")   return out({ ok: true, feed: feed() });
     return out({ ok: true, message: "HSK5 스터디룸 서버 동작 중" });
   } catch (err) { return out({ ok: false, error: String(err) }); }
 }
@@ -99,6 +100,13 @@ function saveLog(d) {
 }
 function listLogs() {
   return rows(SH_LOG, LOG_HEADERS).map(function (r) { return { time: r[0], student: r[1], src: r[2], where: r[3], how: r[4], result: r[5], memo: r[6] }; });
+}
+
+// ---------- 알림 피드 (최근 피드백·제출) ----------
+function feed() {
+  const fb = rows(SH_FB, FB_HEADERS).slice(-60).map(function (r) { return { type: "feedback", day: fmtDay(r[1]), cat: r[2], time: r[0] }; });
+  const sub = rows(SH_SUB, SUB_HEADERS).slice(-60).map(function (r) { return { type: "submission", day: fmtDay(r[1]), score: r[5], time: r[0] }; });
+  return fb.concat(sub);
 }
 
 // ---------- 조회 ----------
