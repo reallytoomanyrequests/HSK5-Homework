@@ -1,0 +1,17 @@
+{
+ "_설명": "BN이 특정 날짜의 구성을 바꿀 때 쓰는 파일. 날짜(KST) 키가 있으면 plan.json weekly_rotation보다 우선한다. 여기 없는 항목(어휘 범위, 난이도, 해석·어휘 정리, 음성 설정 등)은 plan.json·SPEC.md 그대로.",
+ "2026-11-12": {
+  "note": "BN 지정: LR·WS 모두 유형1(1부분)만",
+  "listening": {"part1_sets": 2, "part2_sets": 0, "questions_per_set": "2~3"},
+  "reading": {"part1": 2},
+  "writing": "part1",
+  "speaking": "part1"
+ },
+ "2026-11-13": {
+  "note": "BN 지정: LR·WS 모두 유형1(1부분)만. 금요일 수업일이라 쓰기는 기본 규칙대로 제외",
+  "listening": {"part1_sets": 2, "part2_sets": 0, "questions_per_set": "2~3"},
+  "reading": {"part1": 2},
+  "writing": null,
+  "speaking": "part1"
+ }
+}
