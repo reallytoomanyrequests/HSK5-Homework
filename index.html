@@ -163,6 +163,12 @@
   .order select:focus{outline:none;border-color:var(--brand)} .order select:disabled{cursor:default;opacity:1}
   .order .slot.right select{border-color:#e0bf45;background:#fff4bf} .order .slot.wrong select{border-color:var(--bad);background:#fde3e3}
   .order .slot .ca{font-size:12px;color:var(--ok);font-weight:700;min-height:16px}
+  .dsec{font-size:12px;font-weight:700;color:var(--mute);padding:10px 8px 6px;letter-spacing:.02em}
+  .pasthead{display:flex;justify-content:space-between;align-items:center;cursor:pointer;border-top:1px solid var(--line);margin-top:10px;padding-top:12px;border-radius:0}
+  .pasthead:hover{color:var(--brand)} .pasthead small{font-weight:600;margin-left:4px;color:#9fb5ae}
+  .pasthead .car{font-size:9px;transition:transform .15s} .pasthead.open .car{transform:rotate(90deg)}
+  .ackrow{margin-top:10px;display:flex;justify-content:flex-end} .ackbtn{font-size:13px;padding:6px 14px}
+  .ackdone{font-size:12.5px;color:var(--ok);font-weight:700} .acknot{font-size:12.5px;color:var(--mute)}
   .savew{margin-left:10px;font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--brand);background:#fff;color:var(--brand);cursor:pointer} .savew.on{background:var(--brand);color:#fff}
   .back{display:none}
   .sidetog{appearance:none;border:1px solid var(--line);background:#fff;color:#1b4a41;width:36px;height:36px;border-radius:10px;font-size:16px;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center}
@@ -273,7 +279,7 @@ const seenSet=()=>new Set(store.get("notiSeen",[]));
 const notiId=n=>`${n.type}|${n.day}|${n.cat||""}|${String(n.time).slice(0,16)}`;
 async function loadNotis(){
   const r=await api({action:"feed"}); if(!r||!r.ok) return;
-  const mine=isTeacher()?r.feed.filter(x=>x.type==="submission"):r.feed.filter(x=>x.type==="feedback");
+  const mine=isTeacher()?r.feed.filter(x=>x.type==="submission"||x.type==="ack"):r.feed.filter(x=>x.type==="feedback");
   NOTIS=mine.sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,30);
   paintNotis();
 }
@@ -284,8 +290,8 @@ function paintNotis(){
   const dayNo=d=>{ const i=DAYS.indexOf(d); return i>=0?`Day ${DAYS.length-i}`:k(d); };
   $("#nlist").innerHTML=NOTIS.length?NOTIS.map(n=>{
     const id=notiId(n); const s=seen.has(id);
-    const text=n.type==="feedback"?`${n.cat||""} 피드백을 확인해보세요${n.cat==="말하기"?"~!":"!"}`:`${STUDENT}이 숙제를 제출했어요${n.score?` (듣기·독해 ${n.score})`:""}`;
-    return `<div class="nitem ${s?"seen":""}" data-id="${id}" data-day="${n.day}" data-tab="feedback"><span class="ic">${n.type==="feedback"?(n.cat==="쓰기"?"✍️":"🎤"):"📥"}</span><div>${text}<small>${dayNo(n.day)} · ${fmtTime(n.time)}</small></div></div>`;
+    const text=n.type==="feedback"?`${n.cat||""} 피드백을 확인해보세요${n.cat==="말하기"?"~!":"!"}`:n.type==="ack"?`${STUDENT}이 ${n.cat||""} 피드백을 확인했어요`:`${STUDENT}이 숙제를 제출했어요${n.score?` (듣기·독해 ${n.score})`:""}`;
+    return `<div class="nitem ${s?"seen":""}" data-id="${id}" data-day="${n.day}" data-tab="feedback"><span class="ic">${n.type==="feedback"?(n.cat==="쓰기"?"✍️":"🎤"):n.type==="ack"?"✅":"📥"}</span><div>${text}<small>${dayNo(n.day)} · ${fmtTime(n.time)}</small></div></div>`;
   }).join(""):`<div class="nempty">아직 알림이 없어요</div>`;
   $("#nlist").querySelectorAll(".nitem").forEach(el=>el.onclick=()=>{
     const seen=seenSet(); seen.add(el.dataset.id); store.set("notiSeen",[...seen]); $("#notis").style.display="none";
@@ -331,7 +337,7 @@ async function renderList(){
   DAYS=days; serverStatus=(st&&st.days)||{};
   const cur=decodeURIComponent(location.hash.slice(1));
   if(!days.length){ $("#daylist").innerHTML=`<p class="muted" style="text-align:center;padding:20px">아직 올라온 숙제가 없어요.</p>`; return; }
-  $("#daylist").innerHTML=days.map((d,i)=>{
+  const item=(d,i)=>{
     const key=d.slice(0,10); const s=serverStatus[key]; const local=store.get("hw:"+d,null); const k=kdate(d);
     const b=[];
     if(s?.submitted) b.push(`<span class="badge done">제출${s.score?` · 듣기 ${s.score}`:""}</span>`);
@@ -340,7 +346,12 @@ async function renderList(){
     else b.push(`<span class="badge new">새 숙제</span>`);
     if(s?.feedback) b.push(`<span class="badge fb">피드백 ${s.feedback}</span>`);
     return `<a href="#${d}" data-day="${d}" class="${d===cur?"active":""}"><div class="d"><span>Day ${days.length-i} <small>${k.m}/${k.d} (${k.wd})</small></span><span class="car">▶</span></div><div class="badges">${b.join("")}</div></a>`;
-  }).join("");
+  };
+  const past=days.slice(1).map((d,j)=>[d,j+1]).reverse();   // 지난 숙제: Day 1부터 아래로
+  let pastOpen=store.get("pastOpen",false); if(past.some(([d])=>d===cur)) pastOpen=true;
+  $("#daylist").innerHTML=`<div class="dsec">오늘 숙제</div>${item(days[0],0)}`+
+    (past.length?`<div class="dsec pasthead ${pastOpen?"open":""}" id="pastHead"><span>지난 숙제 <small>${past.length}</small></span><span class="car">▶</span></div><div class="pastlist" style="${pastOpen?"":"display:none"}">${past.map(([d,i])=>item(d,i)).join("")}</div>`:"");
+  const ph=$("#pastHead"); if(ph) ph.onclick=()=>{ const o=!ph.classList.contains("open"); ph.classList.toggle("open",o); ph.nextElementSibling.style.display=o?"":"none"; store.set("pastOpen",o); fillSubnav(); };
   fillSubnav();
   loadNotis();
 }
@@ -675,6 +686,7 @@ async function renderDay(day){
   fp.innerHTML=`<div class="card${isTeacher()?" teacher":""}"><h2>${isTeacher()?"제출 현황 · 피드백 작성":"선생님 피드백"}</h2><div id="fbBody"><span class="muted">${SUBMIT_URL?"불러오는 중…":"제출 서버가 연결되지 않았어요."}</span></div></div>`;
   const renderStatus=(st)=>{
     const b=fp.querySelector("#fbBody");
+    if(st&&st.ok){ st.submissions=st.submissions||[]; st.feedback=st.feedback||[]; }
     if(!st||!st.ok){ b.innerHTML=`<span class="muted">${SUBMIT_URL?"서버에 연결하지 못했어요.":"제출 서버가 연결되지 않았어요."}</span>`; return; }
     let h="";
     if(isTeacher()){
@@ -692,9 +704,12 @@ async function renderDay(day){
       if(st.submissions.length){ const s=st.submissions[st.submissions.length-1]; h+=`<p class="muted">제출 ${fmtTime(s.time)}${s.score?` · 듣기·독해 ${esc(s.score)}`:""}</p>`; }
       if(!st.feedback.length) h+=`<p class="muted">아직 피드백이 없어요. 선생님이 코멘트를 남기면 여기에 떠요.</p>`;
     }
-    st.feedback.forEach(f=>{ h+=`<div class="fbitem"><small>${f.cat?`<span class="cat">${esc(f.cat)}</span>`:""}${fmtTime(f.time)}</small>${esc(f.text)}</div>`; });
+    st.feedback.forEach(f=>{ h+=`<div class="fbitem"><small>${f.cat?`<span class="cat">${esc(f.cat)}</span>`:""}${fmtTime(f.time)}</small>${esc(f.text)}<div class="ackrow">${f.ack?`<span class="ackdone">✓ ${isTeacher()?STUDENT+" 확인":"확인 완료"} · ${fmtTime(f.ack)}</span>`:(isTeacher()?`<span class="acknot">아직 확인 안 함</span>`:(f.row?`<button class="btn sec ackbtn" data-row="${f.row}">확인 완료</button>`:""))}</div></div>`; });
     b.innerHTML=h;
-    if(st.feedback.length) fp._dot=true, paintTabs();
+    b.querySelectorAll(".ackbtn").forEach(bt=>bt.onclick=async()=>{ bt.disabled=true; bt.textContent="저장 중…";
+      try{ await post({action:"feedback_ack",day:day.slice(0,10),row:+bt.dataset.row}); toast("선생님께 확인했다고 알렸어요"); renderStatus(await api({action:"status",day:day.slice(0,10)})); }
+      catch(e){ toast("저장 실패: "+e.message); bt.disabled=false; bt.textContent="확인 완료"; } });
+    if(st.feedback.some(f=>isTeacher()?false:!f.ack)) fp._dot=true, paintTabs(); else if(fp._dot){ fp._dot=false; paintTabs(); }
     const save=fp.querySelector("#fbSave");
     if(save) save.onclick=async()=>{
       const items=[...fp.querySelectorAll("textarea.fb")].map(t=>({cat:t.dataset.cat,text:t.value.trim()})).filter(x=>x.text);

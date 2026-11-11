@@ -17,7 +17,7 @@ const NTFY_TEACHER  = "";              // ntfy 토픽 : 네 폰 푸시 알림 (�
 const SH_SUB = "제출", SH_FB = "피드백", SH_LOG = "듣기기록", SH_WRONG = "오답노트", FOLDER_NAME = "HSK5 숙제 녹음";
 const PAGES_BASE = APP_URL + "homework/";
 const SUB_HEADERS = ["제출 시각", "숙제 날짜", "학생", "듣기·독해 답", "재생 횟수", "자동 채점", "오답 문항", "쓰기 글자수", "쓰기 전문", "말하기", "녹음 파일", "요약", "쓰기 소요시간"];
-const FB_HEADERS  = ["작성 시각", "숙제 날짜", "영역", "코멘트"];
+const FB_HEADERS  = ["작성 시각", "숙제 날짜", "영역", "코멘트", "학생 확인"];
 const LOG_HEADERS = ["시각", "학생", "출처", "문제 위치", "연습 방식", "결과", "메모"];
 const WRONG_HEADERS = ["기록 시각", "숙제 날짜", "영역", "번호", "문제", "내 답", "정답", "해설", "상태"];
 
@@ -39,6 +39,7 @@ function doPost(e) {
   try {
     const d = JSON.parse(e.postData.contents);
     if (d.action === "feedback") return out(saveFeedback(d));
+    if (d.action === "feedback_ack") return out(ackFeedback(d));
     if (d.action === "log")      return out(saveLog(d));
     if (d.action === "wrong_status") return out(setWrongStatus(d));
     if (d.action === "wrong_add") return out(addWrong(d));
@@ -97,6 +98,16 @@ function saveFeedback(d) {
   return { ok: true };
 }
 
+// ---------- 피드백 확인 (학생) ----------
+function ackFeedback(d) {
+  const sh = getSheet(SH_FB, FB_HEADERS);
+  if (!sh.getRange(1, 5).getValue()) sh.getRange(1, 5).setValue("학생 확인").setFontWeight("bold");
+  const r = Number(d.row); if (!r || r < 2 || r > sh.getLastRow()) return { ok: false, error: "잘못된 행" };
+  if (fmtDay(sh.getRange(r, 2).getValue()) !== String(d.day)) return { ok: false, error: "날짜 불일치" };
+  const now = new Date(); sh.getRange(r, 5).setValue(now);
+  return { ok: true, ack: now };
+}
+
 // ---------- 오답노트 ----------
 function listWrongs() {
   const sh = getSheet(SH_WRONG, WRONG_HEADERS); const v = sh.getDataRange().getValues();
@@ -138,9 +149,11 @@ function listLogs() {
 
 // ---------- 알림 피드 (최근 피드백·제출) ----------
 function feed() {
-  const fb = rows(SH_FB, FB_HEADERS).slice(-60).map(function (r) { return { type: "feedback", day: fmtDay(r[1]), cat: r[2], time: r[0] }; });
+  const fbRows = rows(SH_FB, FB_HEADERS).slice(-60);
+  const fb = fbRows.map(function (r) { return { type: "feedback", day: fmtDay(r[1]), cat: r[2], time: r[0] }; });
+  const ack = fbRows.filter(function (r) { return r[4]; }).map(function (r) { return { type: "ack", day: fmtDay(r[1]), cat: r[2], time: r[4] }; });
   const sub = rows(SH_SUB, SUB_HEADERS).slice(-60).map(function (r) { return { type: "submission", day: fmtDay(r[1]), score: r[5], time: r[0] }; });
-  return fb.concat(sub);
+  return fb.concat(sub).concat(ack);
 }
 
 // ---------- 조회 ----------
@@ -167,7 +180,9 @@ function statusDay(day, isTeacher) {
     if (isTeacher) { base.writing = r[8]; base.recordings = String(r[10] || "").split("\n").filter(Boolean).map(function (x) { const p = x.split("|"); return { name: p[0], url: p[1] }; }); }
     return base;
   });
-  const fb = rows(SH_FB, FB_HEADERS).filter(function (r) { return fmtDay(r[1]) === day; }).map(function (r) { return { time: r[0], cat: r[2], text: r[3] }; });
+  const fbv = getSheet(SH_FB, FB_HEADERS).getDataRange().getValues();
+  const fb = [];
+  for (var i = 1; i < fbv.length; i++) { const r = fbv[i]; if (r[0] && fmtDay(r[1]) === day) fb.push({ row: i + 1, time: r[0], cat: r[2], text: r[3], ack: r[4] || "" }); }
   return { submissions: subs, feedback: fb, teacher: !!isTeacher };
 }
 function fmtDay(v) {
