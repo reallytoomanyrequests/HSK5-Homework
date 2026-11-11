@@ -180,7 +180,16 @@ function notify(who, title, body, day) {
   const email = who === "student" ? STUDENT_EMAIL : TEACHER_EMAIL;
   const topic = who === "student" ? NTFY_STUDENT : NTFY_TEACHER;
   const link = APP_URL + "#" + day;
-  try { if (email) MailApp.sendEmail({ to: email, subject: title, body: body + "\n\n" + link }); } catch (e) {}
+  let sheetLine = "";
+  if (who === "teacher") {
+    try {
+      const ss = SpreadsheetApp.getActiveSpreadsheet(); const sh = ss.getSheetByName(SH_SUB);
+      sheetLine = "\n📊 제출 기록 시트: " + ss.getUrl() + (sh ? "#gid=" + sh.getSheetId() + "&range=A" + sh.getLastRow() : "");
+      const root = DriveApp.getRootFolder().getFoldersByName(FOLDER_NAME);
+      if (root.hasNext()) { const f = root.next().getFoldersByName(day); if (f.hasNext()) sheetLine += "\n🎙 녹음 폴더: " + f.next().getUrl(); }
+    } catch (e) {}
+  }
+  try { if (email) MailApp.sendEmail({ to: email, subject: title, body: body + "\n\n📘 앱에서 보기: " + link + sheetLine }); } catch (e) {}
   try {
     if (topic) UrlFetchApp.fetch("https://ntfy.sh", { method: "post", contentType: "application/json",
       payload: JSON.stringify({ topic: topic, title: title, message: body, click: link, tags: [who === "student" ? "speech_balloon" : "inbox_tray"] }), muteHttpExceptions: true });
