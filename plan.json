@@ -41,7 +41,7 @@
     "part3_passages": 1,
     "part1": 3
    },
-   "writing": "part2",
+   "writing": null,
    "speaking": "part1"
   },
   "1": {
@@ -55,7 +55,7 @@
     "part2": 3
    },
    "writing": "part1",
-   "speaking": "part3"
+   "speaking": null
   },
   "2": {
    "listening": {
@@ -67,7 +67,7 @@
     "part3_passages": 1,
     "part1": 3
    },
-   "writing": "part2",
+   "writing": null,
    "speaking": "part2"
   },
   "3": {
@@ -81,7 +81,7 @@
     "part2": 3
    },
    "writing": "part1",
-   "speaking": "part1"
+   "speaking": null
   },
   "4": {
    "listening": {
@@ -93,7 +93,7 @@
     "part3_passages": 1,
     "part1": 3
    },
-   "writing": "part2",
+   "writing": null,
    "speaking": "part3"
   },
   "5": {
@@ -107,11 +107,11 @@
     "part2": 3
    },
    "writing": "part2",
-   "speaking": "part2"
+   "speaking": null
   },
   "6": {
    "review": true,
-   "note": "이번 주 오답 변형 세트 (시트 연결 전에는 그 주 유형 복습 세트)"
+   "note": "이번 주 오답 변형 세트 (시트 연결 전에는 그 주 유형 복습 세트) / WS는 쓰기·말하기 중 하나만(주마다 번갈아)"
   }
  },
  "type_schedule_by_week": {
@@ -202,5 +202,6 @@
   "denoise": true
  },
  "listening_rule": "매일 듣기 = 1부분 1세트(남녀 대화 1편, 2~3턴씩 주고받기 + 문제 2~3개) + 2부분 1세트(혼자 말하는 단문 1편 + 문제 2~3개). 한 지문에 문제 4개 이상 금지.",
- "order_rule": "영역 안 부분 순서: 낮은 부분부터 (독해 1→2→3). 독해 3부분 지문당 최대 3문항, 듣기 지문당 2~3문항."
+ "order_rule": "영역 안 부분 순서: 낮은 부분부터 (독해 1→2→3). 독해 3부분 지문당 최대 3문항, 듣기 지문당 2~3문항.",
+ "ws_rule": "하루에 쓰기·말하기 중 하나만 낸다(BN 지정 2026-11-13). 기본: 월·수·금(수업일)=말하기, 화·목·토=쓰기, 일요일 복습 세트도 둘 중 하나만. weekly_rotation에서 null인 영역은 그날 내지 않는다. plan_overrides.json도 같은 규칙을 지킨다(둘 다 지정되면 BN에게 확인 없이 내지 말고 쓰기를 우선)."
 }
