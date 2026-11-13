@@ -25,5 +25,20 @@
   },
   "writing": null,
   "speaking": "part1"
+ },
+ "2026-11-14": {
+  "note": "쓰기 1부분은 prepared/2026-11-14/ 의 writing.json과 그림 4장(w1_1~4.png)을 그날 폴더로 복사해 그대로 사용(BN이 미리 확인한 그림, 새로 그리지 말 것). 말하기 없음.",
+  "listening": {
+   "part1_sets": 1,
+   "part2_sets": 1,
+   "questions_per_set": "2~3"
+  },
+  "reading": {
+   "part3_passages": 1,
+   "part2": 3
+  },
+  "writing": "part1",
+  "speaking": null,
+  "prepared": "prepared/2026-11-14"
  }
 }
