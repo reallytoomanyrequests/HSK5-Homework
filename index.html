@@ -230,6 +230,18 @@ const idb={
   async delPrefix(prefix){ try{ const db=await this.open(); await new Promise((res)=>{ const t=db.transaction("rec","readwrite"); const c=t.objectStore("rec").openCursor(); c.onsuccess=()=>{ const cur=c.result; if(!cur){ return; } if(String(cur.key).startsWith(prefix)) cur.delete(); cur.continue(); }; t.oncomplete=res; t.onerror=res; }); }catch(e){} },
   async all(prefix){ try{ const db=await this.open(); return await new Promise((res,rej)=>{ const out={}; const t=db.transaction("rec","readonly"); const c=t.objectStore("rec").openCursor(); c.onsuccess=()=>{ const cur=c.result; if(!cur){ res(out); return; } if(String(cur.key).startsWith(prefix)) out[cur.key]=cur.value; cur.continue(); }; c.onerror=()=>rej(c.error); }); }catch(e){ return {}; } }
 };
+// 녹음 저장: Safari는 IndexedDB에서 꺼낸 Blob을 재생하지 못하는 경우가 있어 ArrayBuffer로 저장한다
+const cleanMime = m => (m||"audio/webm").split(";")[0];
+async function saveRec(day,key,rec){
+  BLOBS[key]=rec;
+  try{ const buf=await rec.blob.arrayBuffer(); await idb.put(`${day}|${key}`,{buf,name:rec.name,mime:rec.mime}); }
+  catch(e){ idb.put(`${day}|${key}`,rec); }
+}
+const loadRec = v => (v&&v.buf) ? {blob:new Blob([v.buf],{type:v.mime||"audio/webm"}),name:v.name,mime:v.mime} : v;
+// 미리듣기가 재생되지 않을 때 안내
+document.addEventListener("error",e=>{ const t=e.target;
+  if(t&&t.tagName==="AUDIO"&&t.controls&&String(t.src).startsWith("blob:")&&!t.dataset.warned){ t.dataset.warned="1";
+    t.insertAdjacentHTML("afterend",`<div class="muted" style="color:var(--bad)">이 브라우저에서 미리듣기가 재생되지 않아요. 다시 녹음해 보고, 계속 안 되면 크롬으로 열어 주세요.</div>`); } },true);
 let teacherPin = store.get("teacherPin","");
 const isTeacher = () => !!teacherPin;
 let serverStatus = {};
@@ -408,11 +420,11 @@ function makeRecorder(day,name,state,key){
       mr.ondataavailable=e=>chunks.push(e.data);
       mr.onstop=()=>{
         clearInterval(iv); stream.getTracks().forEach(t=>t.stop());
-        const blob=new Blob(chunks,{type:mr.mimeType||"audio/webm"}); const url=URL.createObjectURL(blob);
+        const blob=new Blob(chunks,{type:cleanMime(mr.mimeType)}); const url=URL.createObjectURL(blob);
         const ext=(mr.mimeType||"").includes("mp4")?"m4a":"webm"; const fn=`${day}_${name}.${ext}`;
         const dur=Math.round((Date.now()-t0)/1000);
         out.innerHTML=`<audio controls src="${url}" style="width:100%;margin:8px 0"></audio><div class="muted">녹음 ${fmt(dur)} · 제출하면 선생님께 같이 전송돼요</div>`;
-        state.recs=state.recs||{}; state.recs[key]=fmt(dur); saveState(state); BLOBS[key]={blob,name:fn,mime:blob.type}; idb.put(`${day}|${key}`,BLOBS[key]);
+        state.recs=state.recs||{}; state.recs[key]=fmt(dur); saveState(state); saveRec(day,key,{blob,name:fn,mime:blob.type});
         btn.innerHTML="● 다시 녹음"; st.textContent="";
       };
       mr.start(); t0=Date.now(); btn.innerHTML="■ 녹음 끝내기"; st.innerHTML=`<span class="rec"></span> 00:00`;
@@ -439,13 +451,19 @@ function makeSpeaking(day,sec,si,state,title){
     if(sec.prompt) stage.insertAdjacentHTML("beforeend",`<div class="zh ans gray" style="max-width:760px">${sec.prompt}</div>`);
     const countdown=(secs,lab,onEnd)=>{ let left=secs; label.textContent=lab; clock.textContent=fmt(left); clock.classList.remove("warn"); clearInterval(tm);
       tm=setInterval(()=>{ left--; clock.textContent=fmt(Math.max(0,left)); if(left<=10) clock.classList.add("warn"); if(left<=0){ clearInterval(tm); onEnd(); } },1000); };
-    const startRec=()=>{
+    const release=()=>{ if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } };
+    const startRec=async()=>{
+      // 음성을 듣는 동안 꺼 둔 마이크를 다시 켠다
+      if(!stream){ try{ stream=await navigator.mediaDevices.getUserMedia({audio:true}); }catch(e){ toast("마이크 권한이 필요해요"); skipB.style.display="inline-block"; return; } }
       const mime=["audio/mp4","audio/webm;codecs=opus","audio/webm"].find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported(m))||"";
       mr=new MediaRecorder(stream, mime?{mimeType:mime}:{}); chunks=[]; mr.ondataavailable=e=>chunks.push(e.data);
-      mr.onstop=()=>{ clearInterval(tm); stream.getTracks().forEach(t=>t.stop());
-        const blob=new Blob(chunks,{type:mr.mimeType||"audio/webm"}); const ext=(mr.mimeType||"").includes("mp4")?"m4a":"webm"; const dur=Math.round((Date.now()-t0)/1000);
-        state.recs=state.recs||{}; state.recs[key]=fmt(dur); saveState(state); BLOBS[key]={blob,name:`${day}_말하기${sec.part||si+1}_${si}.${ext}`,mime:blob.type}; idb.put(`${day}|${key}`,BLOBS[key]);
+      mr.onstop=()=>{ clearInterval(tm);
+        release();
+        const blob=new Blob(chunks,{type:cleanMime(mr.mimeType)}); const ext=(mr.mimeType||"").includes("mp4")?"m4a":"webm"; const dur=Math.round((Date.now()-t0)/1000);
+        if(blob.size<600){ toast("녹음이 제대로 저장되지 않았어요. 다시 해주세요"); idle(); return; }
+        state.recs=state.recs||{}; state.recs[key]=fmt(dur); saveState(state); saveRec(day,key,{blob,name:`${day}_말하기${sec.part||si+1}_${si}.${ext}`,mime:blob.type});
         toast("답변 녹음 완료"); idle(); };
+      mr.onerror=()=>toast("녹음 중 오류가 났어요. 다시 해주세요");
       mr.start(); t0=Date.now(); recI.innerHTML=`<span class="rec"></span> 녹음 중`; stopB.style.display="inline-block"; stopB.onclick=()=>{ if(mr.state==="recording") mr.stop(); };
       countdown(sec.answerSec||120,"답변 시간",()=>{ if(mr.state==="recording") mr.stop(); });
     };
@@ -456,9 +474,14 @@ function makeSpeaking(day,sec,si,state,title){
     if(sec.audio){
       label.textContent="듣는 중"; clock.textContent="";
       stage.insertAdjacentHTML("beforeend",`<div class="muted" style="margin-top:8px">🔊 음성을 한 번 들려드립니다</div>`);
+      // 듣는 동안은 마이크를 꺼 둔다 (아이패드·사파리에서 음질 저하와 녹음 오류 방지)
+      stream.getTracks().forEach(t=>t.stop()); stream=null;
       const a=new Audio(base+sec.audio);
       a.onended=()=>{ state.plays=state.plays||{}; state.plays[`s${si}`]=(state.plays[`s${si}`]||0)+1; saveState(state); if(sec.prepSec) prep(); else { skipB.style.display="inline-block"; label.textContent="준비 끝"; clock.textContent="00:00"; } };
-      a.play().catch(()=>toast("음성을 재생할 수 없어요"));
+      a.onerror=()=>toast("음성을 불러오지 못했어요. 새로고침 후 다시 해주세요");
+      a.play().catch(()=>{ label.textContent="";
+        stage.insertAdjacentHTML("beforeend",`<div class="row" style="margin-top:8px"><button class="btn" data-act="listen">🔊 음성 듣기</button></div>`);
+        const lb=stage.querySelector("[data-act=listen]"); lb.onclick=()=>{ lb.parentElement.remove(); label.textContent="듣는 중"; a.play().catch(()=>toast("음성을 재생할 수 없어요")); }; });
     } else if(sec.prepSec) prep(); else { skipB.style.display="inline-block"; label.textContent="준비 끝"; clock.textContent="00:00"; }
   }
   idle(); return el;
@@ -478,7 +501,7 @@ async function renderDay(day){
   document.querySelectorAll(".daylist a").forEach(a=>a.classList.toggle("active",decodeURIComponent(a.getAttribute("href").slice(1))===day));
   let state=store.get("hw:"+day,{day,choices:{},writing:{},plays:{},recs:{},submitted:false});
   if(set.version && state.setVersion!==set.version){ state={day,choices:{},writing:{},plays:{},recs:{},submitted:false,setVersion:set.version}; saveState(state); }
-  { const saved=await idb.all(`${day}|`); for(const k in saved){ const key=k.split("|")[1]; if(!BLOBS[key]) BLOBS[key]=saved[k]; } }
+  { const saved=await idb.all(`${day}|`); for(const k in saved){ const key=k.split("|")[1]; if(!BLOBS[key]) BLOBS[key]=loadRec(saved[k]); } }
   const base=`homework/${day}/`; const optEls={};
   content.innerHTML="";
 
@@ -778,7 +801,7 @@ async function renderDay(day){
       if(sec.type==="writing"){ const t=state.writing[`w${si}`]||""; p.writing+=(p.writing?"\n\n":"")+`[${sec.title}]\n`+t; p.writingCount+=t.replace(/\s/g,"").length;
         const e=state.times?.[`t${si}`]; if(e) p.writingTime+=(p.writingTime?", ":"")+`${fmt(e)}${sec.timeSec?` / 제한 ${fmt(sec.timeSec)}`:""}`; }
       if(sec.type==="speaking"){ const b=BLOBS[`r${si}`]; p.sections.push({type:"speaking",title:sec.title,recorded:!!state.recs?.[`r${si}`],dur:state.recs?.[`r${si}`]||"",attached:!!b});
-        if(b){ const b64=await new Promise(r=>{const fr=new FileReader(); fr.onload=()=>r(fr.result.split(",")[1]); fr.readAsDataURL(b.blob);}); p.recordings.push({name:b.name,mime:b.mime,data:b64}); } }
+        if(b){ const b64=await new Promise(r=>{const fr=new FileReader(); fr.onload=()=>r(String(fr.result).split(",")[1]||""); fr.onerror=()=>r(""); fr.readAsDataURL(b.blob);}); if(b64) p.recordings.push({name:b.name,mime:b.mime,data:b64}); else p.sections[p.sections.length-1].attached=false; } }
     }
     return p;
   };
