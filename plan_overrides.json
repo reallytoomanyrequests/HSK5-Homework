@@ -40,5 +40,33 @@
   "writing": "part1",
   "speaking": null,
   "prepared": "prepared/2026-11-14"
+ },
+ "2026-11-17": {
+  "note": "BN 지정: 쓰기 제외, 말하기는 1부분(듣고 자기 말로 다시 말하기)만. LR은 기본 로테이션 그대로",
+  "listening": {
+   "part1_sets": 1,
+   "part2_sets": 1,
+   "questions_per_set": "2~3"
+  },
+  "reading": {
+   "part3_passages": 1,
+   "part2": 3
+  },
+  "writing": null,
+  "speaking": "part1"
+ },
+ "2026-11-18": {
+  "note": "BN 지정: 쓰기 제외, 말하기는 1부분(듣고 자기 말로 다시 말하기)만. LR은 기본 로테이션 그대로",
+  "listening": {
+   "part1_sets": 1,
+   "part2_sets": 1,
+   "questions_per_set": "2~3"
+  },
+  "reading": {
+   "part3_passages": 1,
+   "part1": 3
+  },
+  "writing": null,
+  "speaking": "part1"
  }
 }
