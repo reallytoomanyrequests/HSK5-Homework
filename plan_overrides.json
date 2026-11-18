@@ -70,7 +70,7 @@
   "speaking": "part1"
  },
  "2026-11-19": {
-  "note": "BN 지정: 쓰기 1부분(그림 작문) + 말하기 1부분(듣고 자기 말로 다시 말하기) 둘 다 냄 (WS 하루 하나 규칙 예외). LR은 기본 로테이션 그대로",
+  "note": "BN 지정: 쓰기 1부분(그림 작문) + 말하기 1부분(듣고 자기 말로 다시 말하기) 둘 다 냄 (WS 하루 하나 규칙 예외). LR은 기본 로테이션 그대로. 쓰기 1부분은 prepared/2026-11-19/ 의 writing.json과 그림 4장(w1_1~4.png)을 그날 폴더로 복사해 그대로 사용(새로 그리지 말 것)",
   "listening": {
    "part1_sets": 1,
    "part2_sets": 1,
@@ -81,10 +81,11 @@
    "part2": 3
   },
   "writing": "part1",
-  "speaking": "part1"
+  "speaking": "part1",
+  "prepared": "prepared/2026-11-19"
  },
  "2026-11-20": {
-  "note": "BN 지정: 쓰기 1부분(그림 작문) + 말하기 1부분(듣고 자기 말로 다시 말하기) 둘 다 냄 (WS 하루 하나 규칙 예외). LR은 기본 로테이션 그대로",
+  "note": "BN 지정: 쓰기 1부분(그림 작문) + 말하기 1부분(듣고 자기 말로 다시 말하기) 둘 다 냄 (WS 하루 하나 규칙 예외). LR은 기본 로테이션 그대로. 쓰기 1부분은 prepared/2026-11-20/ 의 writing.json과 그림 4장(w1_1~4.png)을 그날 폴더로 복사해 그대로 사용(새로 그리지 말 것)",
   "listening": {
    "part1_sets": 1,
    "part2_sets": 1,
@@ -95,6 +96,7 @@
    "part1": 3
   },
   "writing": "part1",
-  "speaking": "part1"
+  "speaking": "part1",
+  "prepared": "prepared/2026-11-20"
  }
 }
