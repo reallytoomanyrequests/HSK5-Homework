@@ -190,7 +190,7 @@
     <div class="brand"><img src="icon.png" alt=""><div><b>기솔의 HSK 5급 스터디룸</b></div></div>
     <nav class="daylist" id="daylist"><p class="muted" style="text-align:center">불러오는 중…</p></nav>
     <div class="sidetools"><a href="#listening-log" id="logLink">🎧 听力 연습기록</a><a href="#wrong-notes" id="wrongLink">🔖 오답노트</a></div>
-    <div class="sidefoot"><span>© 2026 Bona Kim</span><a href="#" id="tlink">선생님</a></div>
+    <div class="sidefoot"><span>© 2026 Bona Kim · v1118</span><a href="#" id="tlink">선생님</a></div>
   </aside>
   <main>
     <div class="topbar">
@@ -448,7 +448,7 @@ function makeRecorder(day,name,state,key){
         state.recs=state.recs||{}; state.recs[key]=fmt(dur); saveState(state); saveRec(day,key,{blob,name:fn,mime:blob.type});
         btn.innerHTML="● 다시 녹음"; st.textContent="";
       };
-      mr.start(); t0=Date.now(); btn.innerHTML="■ 녹음 끝내기"; st.innerHTML=`<span class="rec"></span> 00:00`;
+      mr.start(1000); t0=Date.now(); btn.innerHTML="■ 녹음 끝내기"; st.innerHTML=`<span class="rec"></span> 00:00`;
       iv=setInterval(()=>{ st.innerHTML=`<span class="rec"></span> ${fmt(Math.round((Date.now()-t0)/1000))}`; },500);
     }catch(e){ toast("마이크 권한이 필요해요"); }
   };
@@ -481,11 +481,11 @@ function makeSpeaking(day,sec,si,state,title){
       mr.onstop=()=>{ clearInterval(tm);
         release();
         const blob=new Blob(chunks,{type:cleanMime(mr.mimeType)}); const ext=(mr.mimeType||"").includes("mp4")?"m4a":"webm"; const dur=Math.round((Date.now()-t0)/1000);
-        if(blob.size<600){ toast("녹음이 제대로 저장되지 않았어요. 다시 해주세요"); idle(); return; }
+        if(blob.size<600){ toast(`녹음이 제대로 저장되지 않았어요. 다시 해주세요 (${blob.size}B, ${mr.mimeType||"?"})`); idle(); return; }
         state.recs=state.recs||{}; state.recs[key]=fmt(dur); saveState(state); saveRec(day,key,{blob,name:`${day}_말하기${sec.part||si+1}_${si}.${ext}`,mime:blob.type});
         toast("답변 녹음 완료"); idle(); };
-      mr.onerror=()=>toast("녹음 중 오류가 났어요. 다시 해주세요");
-      mr.start(); t0=Date.now(); recI.innerHTML=`<span class="rec"></span> 녹음 중`; stopB.style.display="inline-block"; stopB.onclick=()=>{ if(mr.state==="recording") mr.stop(); };
+      mr.onerror=e=>toast("녹음 중 오류가 났어요. 다시 해주세요 ("+((e&&e.error&&e.error.name)||"?")+")");
+      mr.start(1000); t0=Date.now(); recI.innerHTML=`<span class="rec"></span> 녹음 중`; stopB.style.display="inline-block"; stopB.onclick=()=>{ if(mr.state==="recording") mr.stop(); };
       countdown(sec.answerSec||120,"답변 시간",()=>{ if(mr.state==="recording") mr.stop(); });
     };
     const toAnswer=()=>{ skipB.style.display="none"; clearInterval(tm); startRec(); };
@@ -839,7 +839,7 @@ async function renderDay(day){
     if(!SUBMIT_URL){ finish(); toast("제출 완료 (정답이 열렸어요)"); return; }
     sb.disabled=true; sb.textContent="전송 중…";
     try{ const j=await post(await payload()); finish(); toast(j.score?`제출 완료! 듣기·독해 ${j.score}`:"제출 완료! 선생님께 전송됐어요"); renderStatus(await api({action:"status",day:day.slice(0,10),pin:""})); }
-    catch(e){ console.error(e); toast("전송 실패. 인터넷 연결을 확인하고 다시 눌러주세요"); sb.textContent="다시 시도"; }
+    catch(e){ console.error(e); toast("전송 실패. 인터넷 연결을 확인하고 다시 눌러주세요 ("+String(e&&e.message||e).slice(0,80)+")"); sb.textContent="다시 시도"; }
     sb.disabled=false;
   };
 }
