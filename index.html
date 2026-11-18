@@ -821,7 +821,7 @@ async function renderDay(day){
       if(sec.type==="listening"||sec.type==="reading"){ const answers={}; sec.questions.forEach(q=>answers[q.n]=state.choices[`${si}_${q.n}`]||""); p.sections.push({type:sec.type,title:sec.title,answers,plays:state.plays?.[`s${si}`]||0}); }
       if(sec.type==="writing"){ const t=state.writing[`w${si}`]||""; p.writing+=(p.writing?"\n\n":"")+`[${sec.title}]\n`+t; p.writingCount+=t.replace(/\s/g,"").length;
         const e=state.times?.[`t${si}`]; if(e) p.writingTime+=(p.writingTime?", ":"")+`${fmt(e)}${sec.timeSec?` / 제한 ${fmt(sec.timeSec)}`:""}`; }
-      if(sec.type==="speaking"){ const b=BLOBS[`r${si}`]; p.sections.push({type:"speaking",title:sec.title,recorded:!!state.recs?.[`r${si}`],dur:state.recs?.[`r${si}`]||"",attached:!!b});
+      if(sec.type==="speaking"){ const b0=BLOBS[`r${si}`]; const b=(b0&&b0.blob&&b0.blob.size>=600)?b0:null; p.sections.push({type:"speaking",title:sec.title,recorded:!!state.recs?.[`r${si}`],dur:state.recs?.[`r${si}`]||"",attached:!!b});
         if(b){ const wb=await toWav(b); const b64=await new Promise(r=>{const fr=new FileReader(); fr.onload=()=>r(String(fr.result).split(",")[1]||""); fr.onerror=()=>r(""); fr.readAsDataURL(wb.blob);}); if(b64) p.recordings.push({name:wb.name,mime:wb.mime,data:b64}); else p.sections[p.sections.length-1].attached=false; } }
     }
     return p;
