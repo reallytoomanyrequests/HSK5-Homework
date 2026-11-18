@@ -238,6 +238,27 @@ async function saveRec(day,key,rec){
   catch(e){ idb.put(`${day}|${key}`,rec); }
 }
 const loadRec = v => (v&&v.buf) ? {blob:new Blob([v.buf],{type:v.mime||"audio/webm"}),name:v.name,mime:v.mime} : v;
+// 제출용 변환: 브라우저 녹음(webm·m4a)은 길이 정보가 없어 구글 드라이브에서 0:00으로 뜨고 재생이 안 된다.
+// 보내기 전에 16kHz 모노 WAV로 바꿔 드라이브에서 바로 재생되게 한다. 실패하면 원본을 보낸다.
+async function toWav(rec){
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return rec;
+    const ac=new AC(); const raw=await rec.blob.arrayBuffer();
+    const src=await new Promise((res,rej)=>{ const p=ac.decodeAudioData(raw,res,rej); if(p&&p.then) p.then(res,rej); });
+    ac.close&&ac.close();
+    const rate=16000, len=Math.max(1,Math.ceil(src.duration*rate));
+    const OAC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+    const oc=new OAC(1,len,rate); const bs=oc.createBufferSource(); bs.buffer=src; bs.connect(oc.destination); bs.start(0);
+    const out=await new Promise((res,rej)=>{ oc.oncomplete=e=>res(e.renderedBuffer); const p=oc.startRendering(); if(p&&p.then) p.then(res,rej); });
+    const pcm=out.getChannelData(0), n=pcm.length, buf=new ArrayBuffer(44+n*2), v=new DataView(buf);
+    const w=(o,s)=>{ for(let i=0;i<s.length;i++) v.setUint8(o+i,s.charCodeAt(i)); };
+    w(0,"RIFF"); v.setUint32(4,36+n*2,true); w(8,"WAVE"); w(12,"fmt "); v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+    v.setUint32(24,rate,true); v.setUint32(28,rate*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true); w(36,"data"); v.setUint32(40,n*2,true);
+    for(let i=0;i<n;i++){ const s=Math.max(-1,Math.min(1,pcm[i])); v.setInt16(44+i*2,s<0?s*0x8000:s*0x7fff,true); }
+    if(n<rate*0.5) return rec;
+    return {blob:new Blob([buf],{type:"audio/wav"}),name:String(rec.name||"rec").replace(/\.[^.]+$/,"")+".wav",mime:"audio/wav"};
+  }catch(e){ console.warn("wav 변환 실패, 원본 전송",e); return rec; }
+}
 // 미리듣기가 재생되지 않을 때 안내
 document.addEventListener("error",e=>{ const t=e.target;
   if(t&&t.tagName==="AUDIO"&&t.controls&&String(t.src).startsWith("blob:")&&!t.dataset.warned){ t.dataset.warned="1";
@@ -801,7 +822,7 @@ async function renderDay(day){
       if(sec.type==="writing"){ const t=state.writing[`w${si}`]||""; p.writing+=(p.writing?"\n\n":"")+`[${sec.title}]\n`+t; p.writingCount+=t.replace(/\s/g,"").length;
         const e=state.times?.[`t${si}`]; if(e) p.writingTime+=(p.writingTime?", ":"")+`${fmt(e)}${sec.timeSec?` / 제한 ${fmt(sec.timeSec)}`:""}`; }
       if(sec.type==="speaking"){ const b=BLOBS[`r${si}`]; p.sections.push({type:"speaking",title:sec.title,recorded:!!state.recs?.[`r${si}`],dur:state.recs?.[`r${si}`]||"",attached:!!b});
-        if(b){ const b64=await new Promise(r=>{const fr=new FileReader(); fr.onload=()=>r(String(fr.result).split(",")[1]||""); fr.onerror=()=>r(""); fr.readAsDataURL(b.blob);}); if(b64) p.recordings.push({name:b.name,mime:b.mime,data:b64}); else p.sections[p.sections.length-1].attached=false; } }
+        if(b){ const wb=await toWav(b); const b64=await new Promise(r=>{const fr=new FileReader(); fr.onload=()=>r(String(fr.result).split(",")[1]||""); fr.onerror=()=>r(""); fr.readAsDataURL(wb.blob);}); if(b64) p.recordings.push({name:wb.name,mime:wb.mime,data:b64}); else p.sections[p.sections.length-1].attached=false; } }
     }
     return p;
   };
