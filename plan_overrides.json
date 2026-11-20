@@ -98,5 +98,39 @@
   "writing": "part1",
   "speaking": "part1",
   "prepared": "prepared/2026-11-20"
+ },
+ "2026-11-21": {
+  "note": "BN 지정: 쓰기·말하기 문제는 아예 만들지 말 것. 듣기·독해만",
+  "listening": {
+   "part1_sets": 1,
+   "part2_sets": 1,
+   "questions_per_set": "2~3"
+  },
+  "reading": {
+   "part3_passages": 1,
+   "part2": 3
+  },
+  "writing": null,
+  "speaking": null
+ },
+ "2026-11-22": {
+  "note": "BN 지정: 쓰기·말하기 문제는 아예 만들지 말 것. 듣기·독해만 (일요일 복습 세트도 LR 유형만)",
+  "review": true,
+  "writing": null,
+  "speaking": null
+ },
+ "2026-11-23": {
+  "note": "BN 지정: 쓰기·말하기 문제는 아예 만들지 말 것. 듣기·독해만",
+  "listening": {
+   "part1_sets": 1,
+   "part2_sets": 1,
+   "questions_per_set": "2~3"
+  },
+  "reading": {
+   "part3_passages": 1,
+   "part1": 3
+  },
+  "writing": null,
+  "speaking": null
  }
 }
